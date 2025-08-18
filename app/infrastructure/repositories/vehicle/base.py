@@ -1,0 +1,16 @@
+from typing import Protocol
+from uuid import UUID
+
+from app.domain.entities.vehicle import Vehicle
+
+
+class BaseVehicleRepository(Protocol): 
+    
+    async def create(self, vehicle: Vehicle) -> None: ...
+    
+    async def get_by_id(self, vehicle_id: UUID) -> Vehicle | None: ...
+
+    async def get_by_driver_id(self, driver_id: UUID) -> Vehicle | None: ...
+    
+    async def update(self, vehicle: Vehicle) -> None: ...
+    

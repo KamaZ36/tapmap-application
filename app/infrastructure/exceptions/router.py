@@ -1,0 +1,3 @@
+class FailedToCalculateRoute(Exception):
+    pass
+    
