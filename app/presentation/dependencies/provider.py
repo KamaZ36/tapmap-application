@@ -5,6 +5,8 @@ from redis.asyncio import Redis
 
 from app.infrastructure.redis.connection import get_redis_client
 
+from app.config import settings
+
 from app.services.pricing.pricing_service import PricingService
 from app.services.http_client import http_client
 from app.services.geocoder.base import BaseGeocoder
@@ -41,5 +43,5 @@ class AppProvider(Provider):
     @provide(scope=Scope.APP)
     def get_kafka_message_broker(self) -> BaseMessageBroker:
         return KafkaMessageBroker(producer=AIOKafkaProducer(
-            bootstrap_servers="localhost:9093"
+            bootstrap_servers=settings.kafka_url
         ))

@@ -1,9 +1,32 @@
-version: '3.8'
-
 services:
-  postgres:
+  app:
+    container_name: main-app
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "8000:8000"
+    volumes:
+      - ./app:/src/app
+    networks:
+      - backend_network
+    env_file:
+      - ./.env
+    command: "poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+    restart: always
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      backend_postgres:
+        condition: service_healthy  
+      backend_redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  backend_postgres:
     image: postgis/postgis:16-3.4
-    container_name: taxi_postgres
+    container_name: backend_postgres
     restart: always
     environment:
       POSTGRES_USER: user
@@ -13,6 +36,13 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "database"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend_redis: 
     image: redis:latest
@@ -22,6 +52,13 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -31,6 +68,13 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   kafka:
     image: confluentinc/cp-kafka:7.3.0
@@ -49,6 +93,14 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    networks:
+      - backend_network
 
   kafka-ui:
     container_name: kafka-ui
@@ -57,7 +109,13 @@ services:
       - 8082:8080
     environment:
       DYNAMIC_CONFIG_ENABLED: true
+    networks:
+      - backend_network
 
 volumes:
   pgdata:
   redis_data:
+
+networks:
+  backend_network:
+    driver: bridge
