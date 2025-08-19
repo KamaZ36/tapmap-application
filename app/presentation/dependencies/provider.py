@@ -7,6 +7,7 @@ from app.infrastructure.redis.connection import get_redis_client
 
 from app.config import settings
 
+from app.services.message_broker.redis_broker import RedisMessageBroker
 from app.services.pricing.pricing_service import PricingService
 from app.services.http_client import http_client
 from app.services.geocoder.base import BaseGeocoder
@@ -41,7 +42,8 @@ class AppProvider(Provider):
         return GeolocationService(geocoder=geocoder, router=router)
 
     @provide(scope=Scope.APP)
-    def get_kafka_message_broker(self) -> BaseMessageBroker:
-        return KafkaMessageBroker(producer=AIOKafkaProducer(
-            bootstrap_servers=settings.kafka_url
-        ))
+    def get_kafka_message_broker(self, redis: Redis) -> BaseMessageBroker:
+        return RedisMessageBroker(redis=redis)
+        # return KafkaMessageBroker(producer=AIOKafkaProducer(
+        #     bootstrap_servers=settings.kafka_url
+        # ))
