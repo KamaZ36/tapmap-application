@@ -32,7 +32,7 @@ class SQLAlchemyCityRepository(BaseCityRepository):
             raise CityNotFound()
         return city_model.to_entity()
     
-    async def get_by_into_point(self, coordinates: Coordinates) -> City: 
+    async def get_by_into_point(self, coordinates: Coordinates) -> City | None: 
         shapely_point = ShapelyPoint(coordinates.longitude, coordinates.latitude)
         geo_point = from_shape(shapely_point, srid=4326)
         
@@ -41,9 +41,7 @@ class SQLAlchemyCityRepository(BaseCityRepository):
         )
         result = await self.session.execute(query)
         city_model: CityModel | None = result.scalar_one_or_none()
-        if city_model is None:
-            raise CityNotFound()
-        return city_model.to_entity()
+        return city_model.to_entity() if city_model else None
 
     async def update(self, city: City) -> None: 
         stmt = (

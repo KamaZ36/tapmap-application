@@ -12,7 +12,7 @@ from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 
-from app.services.pricing.pricing_service import PricingService
+from app.application.services.pricing.pricing_service import PricingService
 from app.services.geolocation import GeolocationService
 
 

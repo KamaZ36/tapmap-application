@@ -9,7 +9,8 @@ from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 
-from app.services.pricing.pricing_service import PricingService
+from app.application.exceptions.draft_order import DraftOrderNotFound
+from app.application.services.pricing.pricing_service import PricingService
 from app.services.message_broker.base import BaseMessageBroker
 
 
@@ -25,7 +26,7 @@ class ConfirmDraftOrderInteraction:
     async def __call__(self, user_id: UUID) -> Order:
         draft_order = await self.draft_order_repo.get_by_customer_id(user_id)
         if not draft_order:
-            raise 
+            raise DraftOrderNotFound()
         
         city = await self.city_repository.get_by_id(draft_order.city_id)
         

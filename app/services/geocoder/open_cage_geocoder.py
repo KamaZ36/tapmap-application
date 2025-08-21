@@ -1,6 +1,8 @@
+from httpx import HTTPError
 from app.infrastructure.exceptions.geocoder import GeocodingFailed, IncorrectGeolocation
+from app.application.exceptions.geolocation import GeocodingServiceUnavailable
 
-from app.config import settings
+from app.core.config import settings
 from app.services.geocoder.base import BaseGeocoder
 from app.services.http_client.base import BaseHttpClient
 
@@ -16,16 +18,22 @@ class Geocoder(BaseGeocoder):
             "q": address,
             "key": settings.geocoder_api_key,
         }
-        data = await self.http_client.get(self.BASE_URL, params=params)
-        return self._parse(data)
+        try:
+            data = await self.http_client.get(self.BASE_URL, params=params)
+            return self._parse(data)
+        except HTTPError:
+            raise GeocodingServiceUnavailable()
     
     async def get_address(self, latitude: float, longitude: float) -> dict:
         params = {
             "q": f"{longitude},{latitude}",
             "key": settings.geocoder_api_key,
         }
-        data = await self.http_client.get(self.BASE_URL, params=params)
-        return self._parse(data)
+        try:
+            data = await self.http_client.get(self.BASE_URL, params=params)
+            return self._parse(data)
+        except HTTPError:
+            raise GeocodingServiceUnavailable()
     
     
     def _parse(self, response: dict) -> dict:

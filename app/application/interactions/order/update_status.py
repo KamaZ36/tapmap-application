@@ -5,7 +5,7 @@ from loguru import logger
 from app.application.commands.order import UpdateOrderStatusCommand
 from app.application.dtos.user import CurrentUser
 from app.application.exceptions.permission import NoAccess
-from app.config import settings
+from app.core.config import settings
 
 from app.domain.entities.order import Order, OrderStatus
 from app.domain.entities.user import UserRole

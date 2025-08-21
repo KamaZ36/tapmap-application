@@ -6,7 +6,6 @@ from app.domain.entities.user import UserRole
 from app.domain.entities.vehicle import Vehicle
 
 from app.infrastructure.repositories.vehicle.base import BaseVehicleRepository
-from app.infrastructure.unit_of_work.base import BaseUnitOfWork
 
 from app.services.exceptions.auth import NoAccess
 

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from math import radians, cos, sin, atan2, sqrt
 
 from app.domain.entities.city import City
@@ -5,14 +6,15 @@ from app.domain.value_objects.coordinates import Coordinates
 from app.domain.value_objects.point import Point
 from app.presentation.api.v1.schemas.location import RouteInfoSchema
 from app.services.geocoder.base import BaseGeocoder
+from app.infrastructure.exceptions.geocoder import IncorrectGeolocation, GeocodingFailed
+from app.application.exceptions.draft_order import InvalidLocation
 from app.services.router.base import BaseRouter
 
 
+@dataclass
 class GeolocationService:
-
-    def __init__(self, geocoder: BaseGeocoder, router: BaseRouter):
-        self.geocoder = geocoder
-        self.router = router
+    geocoder: BaseGeocoder
+    router: BaseRouter
 
     @staticmethod
     def calculating_time_route(distance: int) -> int:
@@ -36,13 +38,14 @@ class GeolocationService:
             location: str | tuple[float, float],
             city: City
     ) -> Point:
-        if isinstance(location, str):
-            query = f"Россия, {city.state}, {city.name}, {location}"
-            data = await self.geocoder.get_coordinates(address=query)
-        elif isinstance(location, tuple):
-            data = await self.geocoder.get_address(latitude=location[0], longitude=location[1])
-        else:
-            raise ValueError("Нужно передать или адрес, или координаты.")
+        try:
+            if isinstance(location, str):
+                query = f"Россия, {city.state}, {city.name}, {location}"
+                data = await self.geocoder.get_coordinates(address=query)
+            elif isinstance(location, tuple):
+                data = await self.geocoder.get_address(latitude=location[0], longitude=location[1])
+        except (IncorrectGeolocation, GeocodingFailed):
+            raise InvalidLocation(location=location)
         return Point(
             address=data.get("address"),
             coordinates=Coordinates(**data.get('coordinates')),

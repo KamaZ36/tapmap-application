@@ -1,7 +1,11 @@
 from uuid import UUID
+
 from app.domain.entities.user import UserRole
+
 from app.services.exceptions.auth import NoAccess
-from app.utils.jwt_service import jwt_service
+
+from app.infrastructure.services.jwt_service import jwt_service
+
 from app.application.dtos.user import CurrentUser
 
 

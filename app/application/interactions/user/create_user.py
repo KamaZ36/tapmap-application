@@ -6,7 +6,6 @@ from app.domain.value_objects.phone_number import PhoneNumber
 
 from app.infrastructure.database.transaction_manager.base import TransactionManager
 from app.infrastructure.repositories.user.base import BaseUserRepository
-from app.infrastructure.unit_of_work.base import BaseUnitOfWork
 
 
 @dataclass

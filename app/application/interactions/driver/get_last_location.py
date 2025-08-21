@@ -4,7 +4,6 @@ from uuid import UUID
 from app.domain.value_objects.coordinates import Coordinates
 
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
-from app.infrastructure.unit_of_work.base import BaseUnitOfWork
 
 
 @dataclass

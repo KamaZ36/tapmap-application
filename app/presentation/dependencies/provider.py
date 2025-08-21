@@ -1,20 +1,19 @@
 from dishka import Provider, Scope, provide
-from aiokafka import AIOKafkaProducer
 
 from redis.asyncio import Redis
 
 from app.infrastructure.redis.connection import get_redis_client
 
-from app.config import settings
+from app.core.config import settings
+
+from app.application.services.pricing.pricing_service import PricingService
 
 from app.services.message_broker.redis_broker import RedisMessageBroker
-from app.services.pricing.pricing_service import PricingService
 from app.services.http_client import http_client
 from app.services.geocoder.base import BaseGeocoder
 from app.services.geocoder.open_cage_geocoder import Geocoder
 from app.services.geolocation import GeolocationService
 from app.services.message_broker.base import BaseMessageBroker
-from app.services.message_broker.kafka_broker import KafkaMessageBroker
 from app.services.router.base import BaseRouter
 from app.services.router.osrm_router import Router
 

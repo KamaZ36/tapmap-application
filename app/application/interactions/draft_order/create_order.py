@@ -14,9 +14,9 @@ from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 
-from app.application.exceptions.user import NotSetBaseCityForUser
+from app.application.exceptions.user import NotSetBaseCityForUser, UserNotFound
 
-from app.services.pricing.pricing_service import PricingService
+from app.application.services.pricing.pricing_service import PricingService
 from app.services.geolocation import GeolocationService
 
 
@@ -30,8 +30,10 @@ class CreateDraftOrderInteraction:
         
     async def __call__(self, command: CreateDraftOrderCommand, user_id: UUID) -> DraftOrder | None:
         user = await self.user_repository.get_by_id(user_id)
+        if user is None:
+            raise UserNotFound()
         if not user.base_city_id:
-            raise NotSetBaseCityForUser(user_id)
+            raise NotSetBaseCityForUser()
         city = await self.city_repository.get_by_id(user.base_city_id)
         
         points = await self._create_points(command, city)            

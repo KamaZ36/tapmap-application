@@ -5,6 +5,8 @@ from app.domain.exceptions.base import AppException
 
 @dataclass
 class CommentTooLong(AppException):
+    error_code = "ORDER_COMMENT_TOO_LONG"
+    
     count_symbols: int
     
     @property

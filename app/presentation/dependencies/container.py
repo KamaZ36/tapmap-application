@@ -1,5 +1,6 @@
 from dishka import make_async_container
 
+from app.presentation.dependencies.auth import AuthServices
 from app.presentation.dependencies.city import CityInteractions
 from app.presentation.dependencies.driver import DriverInteractions
 from app.presentation.dependencies.database import DatabaseProvider
@@ -18,5 +19,6 @@ container = make_async_container(
     UserInteractions(), 
     CityInteractions(), 
     DriverInteractions(),
-    VehicleInteractions()
+    VehicleInteractions(), 
+    AuthServices()
 )

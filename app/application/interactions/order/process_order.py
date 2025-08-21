@@ -4,20 +4,22 @@ from loguru import logger
 
 from app.domain.entities.order import OrderStatus
 
-from app.config import settings
+from app.application.exceptions.driver import DriverLastLocationNotSet
+
+from app.services.geolocation import GeolocationService
+from app.services.message_broker.base import BaseMessageBroker
 
 from app.infrastructure.database.transaction_manager.base import TransactionManager
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
 
-from app.services.geolocation import GeolocationService
-from app.services.message_broker.base import BaseMessageBroker
+from app.core.config import settings
 
 
 @dataclass
 class ProcessOrderInteraction:
     order_repository: BaseOrderRepository
-    driver_repsoitory: BaseDriverRepository
+    driver_repository: BaseDriverRepository
     geolocation_service: GeolocationService
     message_broker: BaseMessageBroker
     transaction_manager: TransactionManager
@@ -30,14 +32,15 @@ class ProcessOrderInteraction:
         if order.status != OrderStatus.driver_search:
             return False
         
-        driver = await self.driver_repsoitory.get_nearest_free(order.points[0].coordinates)
+        driver = await self.driver_repository.get_nearest_free(order.points[0].coordinates)
         if not driver:
             logger.warning(f"Для заказа {order_id} не найден водитель")
             return False
         if driver.on_order:
             return False
+        if driver.last_location is None:
+            raise DriverLastLocationNotSet()
         
-        assert driver.last_location 
         submission_route = await self.geolocation_service.get_route_details(
             [
                 driver.last_location,
@@ -53,7 +56,7 @@ class ProcessOrderInteraction:
         driver.assign_to_order()
         
         await self.order_repository.update(order)
-        await self.driver_repsoitory.update(driver)
+        await self.driver_repository.update(driver)
         
         await self.transaction_manager.commit()
         

@@ -1,8 +1,5 @@
 from dishka import Provider, Scope, provide
 
-from app.infrastructure.repositories.user.base import BaseUserRepository
-from app.services.pricing.pricing_service import PricingService
-
 from app.application.interactions.draft_order.add_comment import AddCommentToDraftOrderInteraction
 from app.application.interactions.draft_order.add_point import AddPointToDraftOrderInteraction
 from app.application.interactions.draft_order.confirm_draft_order import ConfirmDraftOrderInteraction
@@ -14,11 +11,6 @@ from app.application.interactions.order.get_order import GetOrderInteraction
 from app.application.interactions.order.get_orders import GetOrdersInteraction
 from app.application.interactions.order.process_order import ProcessOrderInteraction
 from app.application.interactions.order.update_status import UpdateStatusInteraction
-
-from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
-from app.infrastructure.unit_of_work.base import BaseUnitOfWork
-from app.services.geolocation import GeolocationService
-from app.services.message_broker.base import BaseMessageBroker
 
 
 class DraftOrdersInteractions(Provider):

@@ -3,6 +3,8 @@ from uuid import UUID
 
 from app.application.commands.user import SetBaseUserLocationCommand
 
+from app.application.exceptions.city import CityNotSupported
+from app.application.exceptions.user import NotSetBaseCityForUser
 from app.domain.value_objects.coordinates import Coordinates
 
 from app.infrastructure.database.transaction_manager.base import TransactionManager
@@ -22,6 +24,8 @@ class SetBaseLocationUserInteraction:
             longitude=command.coordinates[1]
         )
         city = await self.city_repository.get_by_into_point(coordinates)
+        if city is None:
+            raise CityNotSupported() 
         user = await self.user_repository.get_by_id(user_id)
         user.set_base_city(city.id)
         await self.user_repository.update(user)

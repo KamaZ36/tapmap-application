@@ -6,6 +6,7 @@ from app.application.exceptions.base import LogicException
 
 @dataclass
 class UserNotFound(LogicException):
+    error_code: str = "USER_NOT_FOUND"
     
     @property
     def message(self) -> str:
@@ -13,8 +14,8 @@ class UserNotFound(LogicException):
 
 @dataclass
 class NotSetBaseCityForUser(LogicException):
-    user_id: UUID
+    error_code = "BASE_CITY_NOT_SET"
     
     @property
     def message(self) -> str:
-        return f"У пользователя {str(self.user_id)} не установлен город по умолчанию"
+        return f"У пользователя не установлен город по умолчанию"

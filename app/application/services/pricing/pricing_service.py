@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 from app.domain.entities.city import City
 from app.domain.value_objects.money import Money
 

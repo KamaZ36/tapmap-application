@@ -1,22 +1,25 @@
+from dataclasses import dataclass 
 from uuid import UUID
-from app.infrastructure.unit_of_work.base import BaseUnitOfWork
 
-from app.utils.jwt_service import jwt_service
+from app.infrastructure.repositories.user.base import BaseUserRepository
+
+from app.infrastructure.services.jwt_service import jwt_service
 
 
+@dataclass
 class AuthenticationService:
     
-    def __init__(self, uow: BaseUnitOfWork) -> None:
-        self.uow = uow
+    user_repository: BaseUserRepository
     
+        
     async def login(self, phone_number: str) -> dict[str, str] | None:
-        user = await self.uow.users.get_by_phone(phone_number)
+        user = await self.user_repository.get_by_phone(phone_number)
         tokens = jwt_service.create_tokens(user_id=user.id, roles=user.roles)
         return tokens
     
     async def refresh(self, refresh_token: str) -> dict[str, str] | None:
         token_data = jwt_service.decode_refresh_token(refresh_token)
-        user = await self.uow.users.get_by_id(UUID(token_data['user_id']))
+        user = await self.user_repository.get_by_id(UUID(token_data['user_id']))
         tokens = jwt_service.create_tokens(user_id=user.id, roles=user.roles)
         return tokens
     

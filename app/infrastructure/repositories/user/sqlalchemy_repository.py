@@ -18,20 +18,18 @@ class SQLAlchemyUserRepository(BaseUserRepository):
             id=user.id,
             name=user.name, 
             phone_number=user.phone_number.value,
-            completed_orders_count=user.cancelled_orders_count,
-            cancelled_orders_count=user.completed_orders_count,
+            completed_orders_count=user.completed_orders_count,
+            cancelled_orders_count=user.cancelled_orders_count,
             roles=[role.value for role in user.roles],
             base_city_id=user.base_city_id
         )
         self.session.add(user_model)
         
-    async def get_by_id(self, user_id: UUID) -> User: 
+    async def get_by_id(self, user_id: UUID) -> User| None: 
         query = select(UserModel).where(UserModel.id == user_id)
         result = await self.session.execute(query)
         user_model: UserModel | None = result.scalar_one_or_none()
-        if user_model is None:
-            raise UserNotFound()
-        return user_model.to_entity()
+        return user_model.to_entity() if user_model else None
     
     async def get_by_phone(self, phone_number: str) -> User: 
         query = select(UserModel).where(UserModel.phone_number == phone_number)
@@ -50,7 +48,7 @@ class SQLAlchemyUserRepository(BaseUserRepository):
                 phone_number=user.phone_number.value, 
                 completed_orders_count=user.completed_orders_count,
                 cancelled_orders_count=user.cancelled_orders_count,
-                roles=user.roles,
+                roles=[role.value for role in user.roles],
                 base_city_id=user.base_city_id,
             )
             .execution_options(synchronize_session="fetch")

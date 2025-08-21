@@ -1,11 +1,11 @@
-from typing import Any
 import jwt
+from typing import Any
 
 from uuid import UUID
 from datetime import datetime, timezone, timedelta
 
 from app.domain.entities.user import UserRole
-from app.services.exceptions.auth import ExpiredAccessToken, InvalidAccessToken
+from app.services.exceptions.auth import InvalidAccessToken
 from app.core.config import settings
 
 
