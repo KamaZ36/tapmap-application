@@ -21,4 +21,4 @@ async def add_city(
     interactor: FromDishka[CreateCityInteraction]    
 ) -> None:
     command = CreateCityCommand(**data.model_dump())
-    city = await interactor(data=command, current_user=current_user)
+    city = await interactor(command=command, current_user=current_user)

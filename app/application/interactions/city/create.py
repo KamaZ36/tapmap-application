@@ -34,7 +34,7 @@ class CreateCityInteraction:
         return city
         
     def _validate_permission(self, current_user: CurrentUser) -> None:
-        if not UserRole.admin in current_user.roles:
+        if UserRole.admin in current_user.roles:
             return
         raise NoAccess()
     
