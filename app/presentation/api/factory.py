@@ -15,7 +15,7 @@ from app.presentation.api.v1 import (
 )
 from app.presentation.api.v1.exception_handler import generate_exception_request
 from app.presentation.dependencies.container import container
-from app.core.lifespan import lifespan
+from app.presentation.api.lifespan import lifespan
 
 
 def create_app() -> FastAPI:

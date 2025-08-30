@@ -2,7 +2,7 @@ import pytest
 
 from app.domain.entities.user import User
 from app.application.interactions.user.create_user import CreateUserInteraction
-from app.schemas.user import CreateUserSchema
+from app.presentation.bots.user_tg_bot.schemas.user import CreateUserSchema
 from tests.unit.repositories.fake_unit_of_work import FakeUnitOfWork
 
 

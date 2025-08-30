@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from uuid import UUID
 from loguru import logger
+from app.settings import settings
+
+from app.domain.entities.order import Order, OrderStatus
+from app.domain.entities.user import UserRole
 
 from app.application.commands.order import UpdateOrderStatusCommand
 from app.application.dtos.user import CurrentUser
 from app.application.exceptions.permission import NoAccess
-from app.core.config import settings
-
-from app.domain.entities.order import Order, OrderStatus
-from app.domain.entities.user import UserRole
 
 from app.infrastructure.database.transaction_manager.base import TransactionManager
 from app.infrastructure.repositories.driver.base import BaseDriverRepository

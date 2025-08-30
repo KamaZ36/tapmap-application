@@ -6,6 +6,7 @@ from uuid import UUID
 
 from app.application.commands.order import CreateDraftOrderCommand
 
+from app.application.exceptions.city import CityNotFound
 from app.domain.entities.draft_order import DraftOrder
 from app.domain.entities.city import City
 from app.domain.value_objects.point import Point
@@ -32,9 +33,16 @@ class CreateDraftOrderInteraction:
         user = await self.user_repository.get_by_id(user_id)
         if user is None:
             raise UserNotFound()
+        
         if not user.base_city_id:
             raise NotSetBaseCityForUser()
+        
+        # if (isinstance(command.start_point, str) or isinstance(command.end_point, str)) and not user.base_city_id:
+        #     raise NotSetBaseCityForUser()
+
         city = await self.city_repository.get_by_id(user.base_city_id)
+        if city is None:
+            raise CityNotFound()
         
         points = await self._create_points(command, city)            
         route_info = await self.geolocation_service.get_route_details([point.coordinates for point in points])

@@ -28,9 +28,7 @@ class RedisDraftOrderRepository(BaseDraftOrderRepository):
     async def get_by_customer_id(self, customer_id: UUID) -> DraftOrder | None:
         key = self._make_key(customer_id)
         draft_order_data = await self.redis.get(key)
-        if not draft_order_data:
-            raise DraftOrderNotFound()
-        return self.to_domain(draft_order_data)
+        return self.to_domain(draft_order_data) if draft_order_data else None
         
     async def update(self, draft_order: DraftOrder) -> None: 
         await self.create(draft_order=draft_order)

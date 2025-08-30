@@ -1,7 +1,7 @@
 from functools import lru_cache
 from redis.asyncio import Redis
 
-from app.core.config import settings
+from app.settings import settings
 
 
 @lru_cache()

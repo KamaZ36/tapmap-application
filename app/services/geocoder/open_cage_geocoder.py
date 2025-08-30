@@ -2,7 +2,7 @@ from httpx import HTTPError
 from app.infrastructure.exceptions.geocoder import GeocodingFailed, IncorrectGeolocation
 from app.application.exceptions.geolocation import GeocodingServiceUnavailable
 
-from app.core.config import settings
+from app.settings import settings
 from app.services.geocoder.base import BaseGeocoder
 from app.services.http_client.base import BaseHttpClient
 

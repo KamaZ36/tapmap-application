@@ -1,7 +1,5 @@
 from httpx import AsyncClient, HTTPError
-
 from typing import Any
-
 from app.services.http_client.base import BaseHttpClient
 
 

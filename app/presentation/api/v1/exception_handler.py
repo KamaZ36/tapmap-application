@@ -3,7 +3,6 @@ from typing import Type
 from app.domain.exceptions.base import AppException
 
 from app.application.exceptions.user import UserNotFound
-
 from app.services.exceptions.auth import InvalidAccessToken
 from app.application.exceptions.geolocation import GeocodingServiceUnavailable
 

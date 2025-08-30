@@ -7,7 +7,6 @@ from app.application.exceptions.draft_order import DraftOrderNotFound
 from app.domain.entities.draft_order import DraftOrder
 from app.domain.value_objects.order_comment import OrderComment
 
-from app.infrastructure.database.transaction_manager.base import TransactionManager
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 
 

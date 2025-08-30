@@ -24,13 +24,11 @@ class SQLAlchemyCityRepository(BaseCityRepository):
         city_model = CityModel.to_model(city)
         self.session.add(city_model)
 
-    async def get_by_id(self, city_id: UUID) -> City: 
+    async def get_by_id(self, city_id: UUID) -> City | None: 
         query = select(CityModel).where(CityModel.id == city_id)
         result = await self.session.execute(query)
         city_model: CityModel | None = result.scalar_one_or_none()
-        if city_model is None:
-            raise CityNotFound()
-        return city_model.to_entity()
+        return city_model.to_entity() if city_model else None
     
     async def get_by_into_point(self, coordinates: Coordinates) -> City | None: 
         shapely_point = ShapelyPoint(coordinates.longitude, coordinates.latitude)

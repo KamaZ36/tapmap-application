@@ -4,11 +4,13 @@ from math import radians, cos, sin, atan2, sqrt
 from app.domain.entities.city import City
 from app.domain.value_objects.coordinates import Coordinates
 from app.domain.value_objects.point import Point
-from app.presentation.api.v1.schemas.location import RouteInfoSchema
-from app.services.geocoder.base import BaseGeocoder
-from app.infrastructure.exceptions.geocoder import IncorrectGeolocation, GeocodingFailed
+
 from app.application.exceptions.draft_order import InvalidLocation
+
+from app.services.geocoder.base import BaseGeocoder
 from app.services.router.base import BaseRouter
+from app.application.dtos.location import RouteInfoDTO
+from app.infrastructure.exceptions.geocoder import IncorrectGeolocation, GeocodingFailed
 
 
 @dataclass
@@ -51,10 +53,10 @@ class GeolocationService:
             coordinates=Coordinates(**data.get('coordinates')),
         )
 
-    async def get_route_details(self, coordinates_list: list[Coordinates]) -> RouteInfoSchema:
+    async def get_route_details(self, coordinates_list: list[Coordinates]) -> RouteInfoDTO:
         travel_distance = await self.router.get_distance_route(coordinates_list)
         travel_time = self.calculating_time_route(distance=travel_distance)
-        return RouteInfoSchema(
+        return RouteInfoDTO(
             travel_distance=travel_distance,
             travel_time=travel_time
         )

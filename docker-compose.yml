@@ -12,7 +12,7 @@ services:
       - backend_network
     env_file:
       - ./.env
-    command: "poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+    command: "poetry run uvicorn app.presentation.api.main:app --reload --host 0.0.0.0 --port 8000"
     restart: always
     depends_on:
       # zookeeper:
@@ -23,6 +23,7 @@ services:
         condition: service_healthy
       # kafka:
       #   condition: service_healthy
+
 
   backend_postgres:
     image: postgis/postgis:16-3.4

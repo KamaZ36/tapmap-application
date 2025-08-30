@@ -6,14 +6,15 @@ from app.domain.entities.order import OrderStatus
 
 from app.application.exceptions.driver import DriverLastLocationNotSet
 
-from app.services.geolocation import GeolocationService
-from app.services.message_broker.base import BaseMessageBroker
 
 from app.infrastructure.database.transaction_manager.base import TransactionManager
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
 
-from app.core.config import settings
+from app.services.geolocation import GeolocationService
+from app.services.message_broker.base import BaseMessageBroker
+
+from app.settings import settings
 
 
 @dataclass

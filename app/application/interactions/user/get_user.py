@@ -14,11 +14,8 @@ from app.infrastructure.repositories.user.base import BaseUserRepository
 class GetUserInteractor:
     user_repository: BaseUserRepository
     
-    async def __call__(self, current_user: CurrentUser, user_id: UUID) -> User:
-        if UserRole.admin not in current_user.roles and current_user.user_id != user_id:
-            raise NoAccess()
-        
-        user = await self.user_repository.get_by_id(user_id)
+    async def __call__(self, current_user: UUID, get_user_id: UUID) -> User:
+        user = await self.user_repository.get_by_id(get_user_id)
         if not user: 
             raise UserNotFound()
         return user

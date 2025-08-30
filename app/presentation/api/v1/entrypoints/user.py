@@ -39,7 +39,7 @@ async def get_current_user(
     interactor: FromDishka[GetUserInteractor],
     current_user: CurrentUserDep,
 ) -> ResponseUserSchema:
-    user = await interactor(current_user=current_user, user_id=current_user.user_id)
+    user = await interactor(current_user=current_user, get_user_id=current_user.user_id)
     return ResponseUserSchema.from_domain(user)
 
 

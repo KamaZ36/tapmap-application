@@ -5,8 +5,8 @@ from uuid import UUID
 from datetime import datetime, timezone, timedelta
 
 from app.domain.entities.user import UserRole
-from app.services.exceptions.auth import InvalidAccessToken
-from app.core.config import settings
+from app.infrastructure.exceptions.base import InvalidAccessToken
+from app.settings import settings
 
 
 class JWTService:
