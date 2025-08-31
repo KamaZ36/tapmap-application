@@ -1,15 +1,15 @@
 from typing import Type
 
+from app.application.exceptions.draft_order import DraftOrderNotFound
+from app.application.exceptions.order import OrderNotFound
 from app.domain.exceptions.base import AppException
 
 from app.application.exceptions.user import UserNotFound
-from app.services.exceptions.auth import InvalidAccessToken
+from app.infrastructure.exceptions.base import InvalidAccessToken
 from app.application.exceptions.geolocation import GeocodingServiceUnavailable
 
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
-
-
 
 
 def get_http_status_code(exc: Exception) -> int:
@@ -17,6 +17,8 @@ def get_http_status_code(exc: Exception) -> int:
     exc_to_status: dict[Type[Exception], int] = {
         InvalidAccessToken: status.HTTP_401_UNAUTHORIZED,
         UserNotFound: status.HTTP_404_NOT_FOUND,
+        OrderNotFound: status.HTTP_404_NOT_FOUND,
+        DraftOrderNotFound: status.HTTP_404_NOT_FOUND,
         GeocodingServiceUnavailable: status.HTTP_503_SERVICE_UNAVAILABLE,
     }
     return exc_to_status.get(type(exc), status.HTTP_400_BAD_REQUEST)

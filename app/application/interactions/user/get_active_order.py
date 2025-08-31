@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.application.dtos.order import ExtendedOrder
+from app.application.dtos.user import CurrentUser
 from app.application.exceptions.driver import DriverNotFound
 from app.application.exceptions.user import UserNotFound
 from app.application.exceptions.vehicle import VehicleNotFound
@@ -20,11 +21,11 @@ class GetActiveOrderForUserInteraction:
     driver_repository: BaseDriverRepository
     vehicle_repository: BaseVehicleRepository 
         
-    async def __call__(self, current_user_id: UUID) -> ExtendedOrder | None:
+    async def __call__(self, current_user: CurrentUser) -> ExtendedOrder | None:
         driver = None
         vehicle = None
         
-        order = await self.order_repository.get_active_for_customer(customer_id=current_user_id)
+        order = await self.order_repository.get_active_for_customer(customer_id=current_user.user_id)
         if not order: 
             return None
         
