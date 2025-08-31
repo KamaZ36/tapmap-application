@@ -16,7 +16,7 @@ class UserModel(BaseModel):
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, unique=True)
 
     name: Mapped[str] = mapped_column(unique=False)
-    phone_number: Mapped[str] = mapped_column(unique=False)
+    phone_number: Mapped[str] = mapped_column(unique=True)
     
     completed_orders_count: Mapped[int] = mapped_column(unique=False)
     cancelled_orders_count: Mapped[int] = mapped_column(unique=False)
