@@ -30,7 +30,7 @@ class JWTService:
 
     def create_access_token(self, user_id: UUID, roles: list[UserRole]) -> str:
         access_payload = {'user_id': str(user_id), 'roles': roles, 'type': 'access_token'}
-        return self._generate_token(access_payload, self.access_secret, timedelta(minutes=self.access_exp))
+        return self._generate_token(access_payload, self.access_secret, timedelta(hours=self.access_exp))
 
     def create_refresh_token(self, user_id: UUID) -> str:
         refresh_payload = {'user_id': str(user_id), 'type': 'refresh_token'}
