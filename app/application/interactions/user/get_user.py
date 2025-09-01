@@ -24,5 +24,7 @@ class GetUserInteractor:
     def validate_permissions(self, current_user: CurrentUser, get_user_id: UUID) -> None:
         if UserRole.admin in current_user.roles:
             return 
+        if current_user.user_id == get_user_id:
+            return
         raise NoAccess()
     
