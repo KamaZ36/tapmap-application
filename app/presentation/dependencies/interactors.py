@@ -3,6 +3,7 @@ from dishka import Provider, Scope, provide
 from app.application.interactions.user.create_user import CreateUserInteraction
 from app.application.interactions.user.get_active_order import GetActiveOrderForUserInteraction
 from app.application.interactions.user.get_user import GetUserInteractor
+from app.application.interactions.user.get_users import GetUsersInteraction
 from app.application.interactions.user.set_base_location import SetBaseLocationUserInteraction
 
 from app.application.interactions.driver.create_driver import CreateDriverInteraction
@@ -18,6 +19,7 @@ from app.application.interactions.draft_order.confirm_draft_order import Confirm
 from app.application.interactions.draft_order.create_order import CreateDraftOrderInteraction
 from app.application.interactions.draft_order.delete import DeleteDraftOrderInteraction
 from app.application.interactions.draft_order.get_draft_order import GetDraftOrderInteraction
+
 from app.application.interactions.order.cancel_order import CancelOrderInteraction
 from app.application.interactions.order.get_order import GetOrderInteraction
 from app.application.interactions.order.get_orders import GetOrdersInteraction
@@ -38,6 +40,7 @@ class Interactors(Provider):
     get_user_interactor = provide(GetUserInteractor)
     get_active_order_for_user_interactor = provide(GetActiveOrderForUserInteraction)
     create_user_interactor = provide(CreateUserInteraction)
+    get_users_interactor = provide(GetUsersInteraction)
     set_user_base_city_interactor = provide(SetBaseLocationUserInteraction)
 
     # DRIVER

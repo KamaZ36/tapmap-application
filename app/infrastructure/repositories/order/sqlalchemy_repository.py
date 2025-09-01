@@ -49,7 +49,7 @@ class SQLAlchemyOrderRepository(BaseOrderRepository):
             max_val = getattr(filters, max_attr)
             
             if min_val is not None and max_val is not None:
-                conditions.append(between(getattr(Order, field), min_val, max_val))
+                conditions.append(between(getattr(OrderModel, field), min_val, max_val))
             elif min_val is not None:
                 conditions.append(getattr(OrderModel, field) >= min_val)
             elif max_val is not None:

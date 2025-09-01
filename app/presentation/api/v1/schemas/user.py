@@ -5,6 +5,15 @@ from pydantic import BaseModel
 from app.domain.entities.user import User, UserRole
 
 
+class GetUsersFiltersSchema(BaseModel):
+    phone_number: str | None = None
+    completed_orders_max: int | None = None
+    completed_orders_min: int | None = None
+    cancelled_orders_max: int | None = None
+    cancelled_orders_min: int | None = None
+    limit: int | None = 5
+    offset: int | None = 0
+
 class CurrentUserSchema(BaseModel):
     user_id: UUID
     roles: list[UserRole]

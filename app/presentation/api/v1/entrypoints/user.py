@@ -1,19 +1,22 @@
-from fastapi import APIRouter, status 
+from uuid import UUID
+from fastapi import APIRouter, Depends, status 
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi.responses import JSONResponse
 
 
 from app.application.commands.user import CreateUserCommand, SetBaseUserLocationCommand
 from app.application.dtos.order import GetOrdersFilters
+from app.application.dtos.user import GetUsersFilters
 from app.application.interactions.order.get_orders import GetOrdersInteraction
 from app.application.interactions.user.create_user import CreateUserInteraction
 from app.application.interactions.user.get_active_order import GetActiveOrderForUserInteraction
 from app.application.interactions.user.get_user import GetUserInteractor
+from app.application.interactions.user.get_users import GetUsersInteraction
 from app.application.interactions.user.set_base_location import SetBaseLocationUserInteraction
 
 from app.presentation.api.dependencies import CurrentUserDep
 from app.presentation.api.v1.schemas.order import ResponseExtendedOrderSchema, ResponseOrderSchema
-from app.presentation.api.v1.schemas.user import ResponseUserSchema, CreateUserSchema, UpdateUserBaseLocationSchema
+from app.presentation.api.v1.schemas.user import GetUsersFiltersSchema, ResponseUserSchema, CreateUserSchema, UpdateUserBaseLocationSchema
 
 
 router = APIRouter(route_class=DishkaRoute)
@@ -32,6 +35,19 @@ async def register_user(
     return ResponseUserSchema.from_domain(user)
 
 @router.get(
+    '',
+    summary="Получить список пользователей по фильтрам"
+)
+async def get_filtered_users(
+    current_user: CurrentUserDep, 
+    interactor: FromDishka[GetUsersInteraction],
+    data: GetUsersFiltersSchema = Depends(),
+) -> list[ResponseUserSchema]:
+    filters = GetUsersFilters(**data.model_dump())
+    users = await interactor(current_user=current_user, filters=filters)
+    return [ResponseUserSchema.from_domain(user) for user in users]
+
+@router.get(
     '/me',
     summary="Получить текущего пользователя"
 )
@@ -42,6 +58,17 @@ async def get_current_user(
     user = await interactor(current_user=current_user, get_user_id=current_user.user_id)
     return ResponseUserSchema.from_domain(user)
 
+@router.get(
+    '/{user_id}',
+    summary="Получить пользователя по ID (Только администраторам)"
+)
+async def get_user_by_id(
+    user_id: UUID,
+    current_user: CurrentUserDep,
+    interactor: FromDishka[GetUserInteractor]
+) -> ResponseUserSchema:
+    user = await interactor(current_user=current_user, get_user_id=user_id)
+    return ResponseUserSchema.from_domain(user)
 
 @router.get(
     '/me/orders/active',
