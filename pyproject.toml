@@ -26,6 +26,8 @@ aiokafka = "^0.12.0"
 aiogram = "^3.22.0"
 faststream = "^0.5.48"
 orjson = "^3.11.3"
+adaptix = "^3.0.0b11"
+ruff = "^0.12.12"
 
 
 [tool.poetry.group.dev.dependencies]

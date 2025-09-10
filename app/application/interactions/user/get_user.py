@@ -13,18 +13,19 @@ from app.infrastructure.repositories.user.base import BaseUserRepository
 @dataclass
 class GetUserInteractor:
     user_repository: BaseUserRepository
-    
+
     async def __call__(self, current_user: CurrentUser, get_user_id: UUID) -> User:
         self.validate_permissions(current_user=current_user, get_user_id=get_user_id)
         user = await self.user_repository.get_by_id(get_user_id)
-        if not user: 
-            raise UserNotFound()    
+        if not user:
+            raise UserNotFound()
         return user
 
-    def validate_permissions(self, current_user: CurrentUser, get_user_id: UUID) -> None:
+    def validate_permissions(
+        self, current_user: CurrentUser, get_user_id: UUID
+    ) -> None:
         if UserRole.admin in current_user.roles:
-            return 
+            return
         if current_user.user_id == get_user_id:
             return
         raise NoAccess()
-    

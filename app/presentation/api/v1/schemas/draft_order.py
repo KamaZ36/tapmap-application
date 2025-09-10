@@ -11,12 +11,15 @@ from app.domain.entities.draft_order import DraftOrder
 class CreateDraftOrderSchema(BaseModel):
     start_point: str | tuple[float, float]
     end_point: str | tuple[float, float]
-    
+
+
 class AddPointToDraftOrderSchema(BaseModel):
     point: str | tuple[float, float]
 
+
 class AddCommentSchema(BaseModel):
     comment: str
+
 
 class ResponseDraftOrderSchema(BaseModel):
     id: UUID
@@ -30,7 +33,7 @@ class ResponseDraftOrderSchema(BaseModel):
     created_at: datetime
 
     @classmethod
-    def from_domain(cls, draft_order: DraftOrder) -> 'ResponseDraftOrderSchema':
+    def from_domain(cls, draft_order: DraftOrder) -> "ResponseDraftOrderSchema":
         return cls(
             id=draft_order.id,
             customer_id=draft_order.customer_id,
@@ -40,5 +43,5 @@ class ResponseDraftOrderSchema(BaseModel):
             travel_distance=draft_order.travel_distance,
             travel_time=draft_order.travel_time,
             comment=draft_order.comment.text if draft_order.comment else None,
-            created_at=draft_order.created_at
+            created_at=draft_order.created_at,
         )

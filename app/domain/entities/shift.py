@@ -7,7 +7,7 @@ from app.domain.entities.base import Entity
 
 class ShiftStatus(str, Enum):
     active = "active"
-    
+
 
 @dataclass(kw_only=True)
 class Shift(Entity):

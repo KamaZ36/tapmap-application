@@ -5,8 +5,10 @@ from pydantic import BaseModel
 class LoginSchema(BaseModel):
     phone_number: str
 
+
 class RefreshLoginSchema(BaseModel):
     refresh_token: str
+
 
 class ResponseTokensSchema(BaseModel):
     user_id: UUID

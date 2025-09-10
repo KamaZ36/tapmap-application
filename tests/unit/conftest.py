@@ -12,8 +12,9 @@ def test_driver() -> Driver:
     return Driver(
         first_name="Виктор",
         last_name="Викторович",
-        phone_number=PhoneNumber('79999999999'),
+        phone_number=PhoneNumber("79999999999"),
     )
+
 
 @pytest.fixture
 def vehicle():
@@ -22,6 +23,5 @@ def vehicle():
         brand="Toyota",
         model="Camry",
         color="черный",
-        number=VehicleNumber("К123КК36")
+        number=VehicleNumber("К123КК36"),
     )
-    

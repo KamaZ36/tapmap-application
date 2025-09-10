@@ -7,7 +7,6 @@ from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepos
 @dataclass
 class DeleteDraftOrderInteraction:
     draft_order_repo: BaseDraftOrderRepository
-    
+
     async def __call__(self, user_id: UUID) -> None:
         await self.draft_order_repo.delete(user_id)
-    

@@ -7,4 +7,4 @@ from app.domain.exceptions.base import AppException
 class InvalidPolygon(AppException):
     @property
     def message(self) -> str:
-        return "Некорректный полигон города"
+        return "Некорректный полигон"

@@ -2,7 +2,7 @@ from decimal import Decimal
 from pydantic import BaseModel
 
 
-class CreateCitySchema(BaseModel): 
+class CreateCitySchema(BaseModel):
     name: str
     state: str
     base_price: Decimal

@@ -14,18 +14,19 @@ from app.infrastructure.repositories.vehicle.base import BaseVehicleRepository
 @dataclass
 class GetVehicleInteraction:
     vehicle_repository: BaseVehicleRepository
-        
+
     async def __call__(self, vehicle_id: UUID, current_user: CurrentUser) -> Vehicle:
         vehicle = await self.vehicle_repository.get_by_id(vehicle_id)
         if not vehicle:
             raise VehicleNotFound()
         self._validate_permissions(vehicle, current_user)
         return vehicle
-            
-    def _validate_permissions(self, vehicle: Vehicle, current_user: CurrentUser) -> None:
+
+    def _validate_permissions(
+        self, vehicle: Vehicle, current_user: CurrentUser
+    ) -> None:
         if vehicle.driver_id == current_user.user_id:
             return
         if UserRole.admin in current_user.roles:
             return
         raise NoAccess
-    

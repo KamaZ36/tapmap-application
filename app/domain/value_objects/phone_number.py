@@ -3,10 +3,11 @@ import re
 
 from app.domain.value_objects.base import ValueObject
 
+
 @dataclass(frozen=True)
-class PhoneNumber(ValueObject): 
+class PhoneNumber(ValueObject):
     value: str
-    
+
     def __post_init__(self):
         cleaned = re.sub(r"[^\d]", "", self.value)
 
@@ -24,7 +25,6 @@ class PhoneNumber(ValueObject):
 
         # Обновляем значение (только через object.__setattr__ из-за frozen=True)
         object.__setattr__(self, "value", cleaned)
-        
-    def __str__(self) -> str: 
+
+    def __str__(self) -> str:
         return self.value
-        

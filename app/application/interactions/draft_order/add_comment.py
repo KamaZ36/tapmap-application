@@ -14,7 +14,9 @@ from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepos
 class AddCommentToDraftOrderInteraction:
     draft_order_repo: BaseDraftOrderRepository
 
-    async def __call__(self, user_id: UUID, command: AddCommentToDraftOrderCommand) -> DraftOrder:
+    async def __call__(
+        self, user_id: UUID, command: AddCommentToDraftOrderCommand
+    ) -> DraftOrder:
         comment = OrderComment(command.comment)
         draft_order = await self.draft_order_repo.get_by_customer_id(user_id)
         if not draft_order:
@@ -22,4 +24,3 @@ class AddCommentToDraftOrderInteraction:
         draft_order.add_comment(comment)
         await self.draft_order_repo.update(draft_order)
         return draft_order
-    

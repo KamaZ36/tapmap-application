@@ -12,13 +12,13 @@ router = APIRouter(route_class=DishkaRoute)
 
 
 @router.post(
-    '',
-    summary="Добавить новый город в поддерживаемые сервисом (Только администраторам)"
+    "",
+    summary="Добавить новый город в поддерживаемые сервисом (Только администраторам)",
 )
 async def add_city(
     data: CreateCitySchema,
     current_user: CurrentUserDep,
-    interactor: FromDishka[CreateCityInteraction]    
+    interactor: FromDishka[CreateCityInteraction],
 ) -> None:
     command = CreateCityCommand(**data.model_dump())
     city = await interactor(command=command, current_user=current_user)

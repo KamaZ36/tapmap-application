@@ -1,8 +1,7 @@
 from dataclasses import dataclass
+from uuid import UUID
 from datetime import datetime
 from decimal import Decimal
-from typing import Any
-from uuid import UUID
 
 from app.domain.entities.driver import Driver
 from app.domain.entities.user import User
@@ -11,7 +10,7 @@ from app.domain.enums.order_status import OrderStatus
 from app.domain.value_objects.money import Money
 from app.domain.value_objects.order_comment import OrderComment
 from app.domain.value_objects.phone_number import PhoneNumber
-from app.domain.value_objects.point import Point
+from app.domain.value_objects.order_point import OrderPoint
 
 
 @dataclass(frozen=True)
@@ -29,6 +28,7 @@ class GetOrdersFilters:
     limit: int | None = 5
     offset: int | None = 0
 
+
 @dataclass(frozen=True, kw_only=True)
 class ExtendedOrder:
     id: UUID
@@ -36,7 +36,7 @@ class ExtendedOrder:
     driver: Driver | None = None
     city_id: UUID
     vehicle: Vehicle | None = None
-    points: list[Point]
+    points: list[OrderPoint]
     status: OrderStatus
     price: Money
     service_commission: Money
@@ -46,4 +46,3 @@ class ExtendedOrder:
     feeding_distance: int | None = None
     comment: OrderComment | None = None
     created_at: datetime
-    

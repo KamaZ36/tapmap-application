@@ -1,24 +1,46 @@
 from dishka import Provider, Scope, provide
 
 from app.application.interactions.user.create_user import CreateUserInteraction
-from app.application.interactions.user.get_active_order import GetActiveOrderForUserInteraction
+from app.application.interactions.user.get_active_order import (
+    GetActiveOrderForUserInteraction,
+)
 from app.application.interactions.user.get_user import GetUserInteractor
 from app.application.interactions.user.get_users import GetUsersInteraction
-from app.application.interactions.user.set_base_location import SetBaseLocationUserInteraction
+from app.application.interactions.user.set_base_location import (
+    SetBaseLocationUserInteraction,
+)
 
 from app.application.interactions.driver.create_driver import CreateDriverInteraction
-from app.application.interactions.driver.get_active_order import GetActiveOrderForDriverInteraction
+from app.application.interactions.driver.get_active_order import (
+    GetActiveOrderForDriverInteraction,
+)
 from app.application.interactions.driver.get_driver import GetDriverInteraction
-from app.application.interactions.driver.get_last_location import GetLastLocationDriverInteraction
-from app.application.interactions.driver.switch_on_shift import SwitchDriverOnShiftInteraction
-from app.application.interactions.driver.update_location import UpdateLocationInteraction
+from app.application.interactions.driver.get_last_location import (
+    GetLastLocationDriverInteraction,
+)
+from app.application.interactions.driver.switch_on_shift import (
+    SwitchDriverOnShiftInteraction,
+)
+from app.application.interactions.driver.update_location import (
+    UpdateLocationInteraction,
+)
 
-from app.application.interactions.draft_order.add_comment import AddCommentToDraftOrderInteraction
-from app.application.interactions.draft_order.add_point import AddPointToDraftOrderInteraction
-from app.application.interactions.draft_order.confirm_draft_order import ConfirmDraftOrderInteraction
-from app.application.interactions.draft_order.create_order import CreateDraftOrderInteraction
+from app.application.interactions.draft_order.add_comment import (
+    AddCommentToDraftOrderInteraction,
+)
+from app.application.interactions.draft_order.add_point import (
+    AddPointToDraftOrderInteraction,
+)
+from app.application.interactions.draft_order.confirm_draft_order import (
+    ConfirmDraftOrderInteraction,
+)
+from app.application.interactions.draft_order.create_order import (
+    CreateDraftOrderInteraction,
+)
 from app.application.interactions.draft_order.delete import DeleteDraftOrderInteraction
-from app.application.interactions.draft_order.get_draft_order import GetDraftOrderInteraction
+from app.application.interactions.draft_order.get_draft_order import (
+    GetDraftOrderInteraction,
+)
 
 from app.application.interactions.order.cancel_order import CancelOrderInteraction
 from app.application.interactions.order.get_order import GetOrderInteraction
@@ -66,7 +88,7 @@ class Interactors(Provider):
 
     # CITY
     get_create_city_interactor = provide(CreateCityInteraction)
-    
+
     # VEHICLES
     create_vehicle_interactor = provide(CreateVehicleInteraction)
     get_vehicle_interactor = provide(GetVehicleInteraction)

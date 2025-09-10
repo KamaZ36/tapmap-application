@@ -1,14 +1,13 @@
 from dishka import Provider, provide, Scope
 
 from app.application.services.pricing.pricing_service import PricingService
+from app.application.services.geolocation import GeolocationService
 
-from app.services.geocoder.base import BaseGeocoder
-from app.services.geocoder.open_cage_geocoder import Geocoder
-from app.services.geolocation import GeolocationService
-from app.services.router.base import BaseRouter
-from app.services.router.osrm_router import Router
-
-from app.services.http_client import http_client
+from app.infrastructure.services.geocoder.base import BaseGeocoder
+from app.infrastructure.services.geocoder.open_cage_geocoder import Geocoder
+from app.infrastructure.services.http_client.base import BaseHttpClient
+from app.infrastructure.services.router.base import BaseRouter
+from app.infrastructure.services.router.osrm_router import Router
 
 
 class Services(Provider):
@@ -17,16 +16,17 @@ class Services(Provider):
     @provide(scope=Scope.REQUEST)
     def get_pricing_service(self) -> PricingService:
         return PricingService()
-    
+
     @provide(scope=Scope.REQUEST)
-    def get_geocoder(self) -> BaseGeocoder:
+    def get_geocoder(self, http_client: BaseHttpClient) -> BaseGeocoder:
         return Geocoder(http_client)
-    
+
     @provide(scope=Scope.REQUEST)
-    def get_router(self) -> BaseRouter:
+    def get_router(self, http_client: BaseHttpClient) -> BaseRouter:
         return Router(http_client)
-    
+
     @provide(scope=Scope.REQUEST)
-    def get_geolocation_service(self, router: BaseRouter, geocoder: BaseGeocoder) -> GeolocationService:
+    def get_geolocation_service(
+        self, router: BaseRouter, geocoder: BaseGeocoder
+    ) -> GeolocationService:
         return GeolocationService(geocoder=geocoder, router=router)
-    

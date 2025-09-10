@@ -4,7 +4,7 @@ from app.domain.value_objects.base import ValueObject
 
 
 @dataclass(frozen=True)
-class Coordinates(ValueObject): 
+class Coordinates(ValueObject):
     latitude: float
     longitude: float
 

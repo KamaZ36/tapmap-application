@@ -11,10 +11,10 @@ def uuid7() -> uuid.UUID:
     """
     # Get current Unix time in milliseconds (48 bits)
     timestamp_ms = int(time.time() * 1000)
-    
+
     # Generate 10 random bytes (80 bits total)
     rand_bytes = os.urandom(10)
-    
+
     # Pack into UUID structure:
     # - First 6 bytes: timestamp (big-endian)
     # - Next 2 bytes: version/variant + random bits
@@ -26,5 +26,5 @@ def uuid7() -> uuid.UUID:
         + bytes([rand_bytes[2] & 0x3F | 0x80])  # Variant RFC 4122 (2 bits)
         + rand_bytes[3:]  # Remaining random bits (62 bits)
     )
-    
+
     return uuid.UUID(bytes=uuid_bytes)

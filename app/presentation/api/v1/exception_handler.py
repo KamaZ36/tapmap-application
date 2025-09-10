@@ -5,11 +5,12 @@ from app.application.exceptions.order import OrderNotFound
 from app.domain.exceptions.base import AppException
 
 from app.application.exceptions.user import UserNotFound
-from app.infrastructure.exceptions.base import InvalidAccessToken
 from app.application.exceptions.geolocation import GeocodingServiceUnavailable
 
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
+
+from app.infrastructure.exceptions.auth import InvalidAccessToken
 
 
 def get_http_status_code(exc: Exception) -> int:
@@ -23,13 +24,13 @@ def get_http_status_code(exc: Exception) -> int:
     }
     return exc_to_status.get(type(exc), status.HTTP_400_BAD_REQUEST)
 
-async def generate_exception_request(request: Request, exc: AppException) -> JSONResponse:
+
+async def generate_exception_request(
+    request: Request, exc: AppException
+) -> JSONResponse:
     status_code = get_http_status_code(exc)
-    
+
     return JSONResponse(
         status_code=status_code,
-        content={
-            "message": exc.message,
-            "error_code": exc.error_code
-        }
+        content={"message": exc.message, "error_code": exc.error_code},
     )

@@ -5,15 +5,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.connection import async_session_maker
 from app.infrastructure.database.transaction_manager.base import TransactionManager
-from app.infrastructure.database.transaction_manager.sqlalchemy import SQLAlchemyTransactionManager
+from app.infrastructure.database.transaction_manager.sqlalchemy import (
+    SQLAlchemyTransactionManager,
+)
 from app.infrastructure.redis.connection import get_redis_client
-
-from app.services.message_broker.base import BaseMessageBroker
-from app.services.message_broker.redis_broker import RedisMessageBroker
+from app.infrastructure.services.http_client.base import BaseHttpClient
+from app.infrastructure.services.http_client.http_client import HttpClient
+from app.infrastructure.services.message_broker.base import BaseMessageBroker
+from app.infrastructure.services.message_broker.redis_broker import RedisMessageBroker
 
 
 class BaseAppProvider(Provider):
-    
+    # HTTP CLIENT
+    @provide(scope=Scope.APP)
+    def get_http_client(self) -> BaseHttpClient:
+        return HttpClient()
+
     # DATABASE
     @provide(scope=Scope.REQUEST)
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
@@ -23,12 +30,12 @@ class BaseAppProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def get_transaction_manager(self, session: AsyncSession) -> TransactionManager:
         return SQLAlchemyTransactionManager(session=session)
-        
+
     # REDIS
     @provide(scope=Scope.APP)
     def get_redis_client(self) -> Redis:
         return get_redis_client()
-    
+
     # MESSAGE BROKER
     @provide(scope=Scope.APP)
     def get_message_broker(self, redis: Redis) -> BaseMessageBroker:

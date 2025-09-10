@@ -14,26 +14,27 @@ from app.infrastructure.repositories.driver.base import BaseDriverRepository
 class SwitchDriverOnShiftInteraction:
     driver_repository: BaseDriverRepository
     transaction_manager: TransactionManager
-    
-    async def __call__(self, current_user: CurrentUser, driver_id: UUID, status: bool) -> bool:
+
+    async def __call__(
+        self, current_user: CurrentUser, driver_id: UUID, status: bool
+    ) -> bool:
         self._validate_permissions(current_user=current_user, driver_id=driver_id)
         driver = await self.driver_repository.get_by_id(driver_id=driver_id)
-        
+
         if driver.status == status:
             return status
-        
+
         driver.set_shift_status(status)
-        
+
         await self.driver_repository.update(driver)
         await self.transaction_manager.commit()
         return driver.on_shift
-    
+
     def _validate_permissions(self, current_user: CurrentUser, driver_id: UUID) -> None:
         if driver_id == current_user.user_id:
             return
-        
+
         if UserRole.admin in current_user.roles:
             return
-        
+
         raise NoAccess
-    

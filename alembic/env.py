@@ -36,18 +36,43 @@ target_metadata = BaseModel.metadata
 def include_object(object, name, type_, reflected, compare_to):
     # Исключаем таблицы и индексы PostGIS
     excluded_tables = [
-        "spatial_ref_sys", "topology", "layer",
-        "county", "state", "addr", "edges", "faces",
-        "county_lookup", "pagc_gaz", "zip_state_loc",
-        "loader_platform", "cousub", "loader_variables",
-        "featnames", "countysub_lookup", "pagc_lex",
-        "street_type_lookup", "direction_lookup",
-        "tabblock", "addrfeat", "place_lookup",
-        "place", "zip_lookup_base", "tabblock20",
-        "state_lookup", "zip_lookup_all", "tract",
-        "pagc_rules", "zcta5", "zip_lookup",
-        "loader_lookuptables", "geocode_settings_default", "geocode_settings",
-        "zip_state", "secondary_unit_lookup", "bg"
+        "spatial_ref_sys",
+        "topology",
+        "layer",
+        "county",
+        "state",
+        "addr",
+        "edges",
+        "faces",
+        "county_lookup",
+        "pagc_gaz",
+        "zip_state_loc",
+        "loader_platform",
+        "cousub",
+        "loader_variables",
+        "featnames",
+        "countysub_lookup",
+        "pagc_lex",
+        "street_type_lookup",
+        "direction_lookup",
+        "tabblock",
+        "addrfeat",
+        "place_lookup",
+        "place",
+        "zip_lookup_base",
+        "tabblock20",
+        "state_lookup",
+        "zip_lookup_all",
+        "tract",
+        "pagc_rules",
+        "zcta5",
+        "zip_lookup",
+        "loader_lookuptables",
+        "geocode_settings_default",
+        "geocode_settings",
+        "zip_state",
+        "secondary_unit_lookup",
+        "bg",
         # Дополните список таблиц, которые нужно исключить
     ]
     if type_ == "table" and name in excluded_tables:
@@ -75,7 +100,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        include_object=include_object
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -97,8 +122,9 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata,
-            include_object=include_object
+            connection=connection,
+            target_metadata=target_metadata,
+            include_object=include_object,
         )
 
         with context.begin_transaction():

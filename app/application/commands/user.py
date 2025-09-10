@@ -8,6 +8,7 @@ class CreateUserCommand(BaseCommand):
     phone_number: str
     name: str
 
+
 @dataclass(frozen=True)
 class SetBaseUserLocationCommand(BaseCommand):
     coordinates: tuple[float, float]

@@ -4,5 +4,5 @@ from typing import Any, Generic, TypeVar
 
 
 @dataclass(frozen=True)
-class ValueObject(ABC): 
+class ValueObject(ABC):
     pass

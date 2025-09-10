@@ -5,4 +5,3 @@ from app.infrastructure.services.auth.authentication import AuthenticationServic
 
 class AuthServices(Provider):
     authentication_service = provide(AuthenticationService, scope=Scope.REQUEST)
-    

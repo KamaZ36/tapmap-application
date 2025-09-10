@@ -19,5 +19,3 @@ def make_base_providers():
 
 def make_base_container():
     return make_async_container(*make_base_providers())
-
-

@@ -5,6 +5,6 @@ from app.domain.value_objects.coordinates import Coordinates
 
 
 @dataclass(frozen=True)
-class Point(ValueObject): 
+class OrderPoint(ValueObject):
     address: str
     coordinates: Coordinates

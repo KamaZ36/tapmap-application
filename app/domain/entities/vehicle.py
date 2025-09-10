@@ -4,10 +4,11 @@ from uuid import UUID
 from app.domain.entities.base import Entity
 from app.domain.value_objects.vehicle_number import VehicleNumber
 
+
 @dataclass
-class Vehicle(Entity): 
+class Vehicle(Entity):
     driver_id: UUID
-    
+
     brand: str
     model: str
     color: str
@@ -21,6 +22,6 @@ class Vehicle(Entity):
 
     def update_number(self, number: VehicleNumber) -> None:
         self.number = number
-        
+
     def display_name(self) -> str:
-        return f'{self.brand} {self.model} ({self.color} - {self.number.value})'
+        return f"{self.brand} {self.model} ({self.color} - {self.number.value})"

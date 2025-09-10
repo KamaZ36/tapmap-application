@@ -18,8 +18,10 @@ class CreateDriverInteraction:
     driver_repository: BaseDriverRepository
     user_repository: BaseUserRepository
     transaction_manager: TransactionManager
-           
-    async def __call__(self, command: CreateDriverCommand, current_user: CurrentUser) -> Driver:
+
+    async def __call__(
+        self, command: CreateDriverCommand, current_user: CurrentUser
+    ) -> Driver:
         user = await self.user_repository.get_by_id(command.user_id)
         self._validate_permissions(current_user)
         driver = Driver(
@@ -28,16 +30,15 @@ class CreateDriverInteraction:
             last_name=command.last_name,
             middle_name=command.middle_name,
             license_number=command.license_number,
-            phone_number=PhoneNumber(command.phone_number)
+            phone_number=PhoneNumber(command.phone_number),
         )
         user.roles.append(UserRole.driver)
         await self.driver_repository.create(driver)
         await self.user_repository.update(user)
         await self.transaction_manager.commit()
         return driver
-    
+
     def _validate_permissions(self, current_user: CurrentUser) -> None:
         if UserRole.admin in current_user.roles:
             return
         raise NoAccess()
-    

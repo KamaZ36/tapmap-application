@@ -3,14 +3,14 @@ from math import radians, cos, sin, atan2, sqrt
 
 from app.domain.entities.city import City
 from app.domain.value_objects.coordinates import Coordinates
-from app.domain.value_objects.point import Point
+from app.domain.value_objects.order_point import OrderPoint
 
 from app.application.exceptions.draft_order import InvalidLocation
-
-from app.services.geocoder.base import BaseGeocoder
-from app.services.router.base import BaseRouter
 from app.application.dtos.location import RouteInfoDTO
+
 from app.infrastructure.exceptions.geocoder import IncorrectGeolocation, GeocodingFailed
+from app.infrastructure.services.geocoder.base import BaseGeocoder
+from app.infrastructure.services.router.base import BaseRouter
 
 
 @dataclass
@@ -36,28 +36,31 @@ class GeolocationService:
         return earth_radius * c
 
     async def resolve_location(
-            self,
-            location: str | tuple[float, float],
-            city: City
-    ) -> Point:
+        self, location: str | tuple[float, float], city: City | None = None
+    ) -> OrderPoint:
         try:
-            if isinstance(location, str):
+            if isinstance(location, str) and city:
                 query = f"Россия, {city.state}, {city.name}, {location}"
                 data = await self.geocoder.get_coordinates(address=query)
             elif isinstance(location, tuple):
-                data = await self.geocoder.get_address(latitude=location[0], longitude=location[1])
+                data = await self.geocoder.get_address(
+                    latitude=location[1], longitude=location[0]
+                )
+            else:
+                raise TypeError()
         except (IncorrectGeolocation, GeocodingFailed):
             raise InvalidLocation(location=location)
-        return Point(
+        return OrderPoint(
             address=data.get("address"),
-            coordinates=Coordinates(**data.get('coordinates')),
+            coordinates=Coordinates(
+                latitude=data["coordinates"]["latitude"],
+                longitude=data["coordinates"]["longitude"],
+            ),
         )
 
-    async def get_route_details(self, coordinates_list: list[Coordinates]) -> RouteInfoDTO:
+    async def get_route_details(
+        self, coordinates_list: list[Coordinates]
+    ) -> RouteInfoDTO:
         travel_distance = await self.router.get_distance_route(coordinates_list)
         travel_time = self.calculating_time_route(distance=travel_distance)
-        return RouteInfoDTO(
-            travel_distance=travel_distance,
-            travel_time=travel_time
-        )
-        
+        return RouteInfoDTO(travel_distance=travel_distance, travel_time=travel_time)

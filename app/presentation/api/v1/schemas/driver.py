@@ -13,20 +13,23 @@ class CreateDriverSchema(BaseModel):
     phone_number: str
     license_number: str
 
+
 class UpdateDriverLocationSchema(BaseModel):
     coordinates: tuple[float, float]
+
 
 class ResponseDriverForOrder(BaseModel):
     id: UUID
     phone_number: str
     first_name: str
 
+
 class ResponseDriverSchema(BaseModel):
     id: UUID
     first_name: str
     last_name: str
     middle_name: str | None = None
-    license_number: str 
+    license_number: str
     phone_number: str
     completed_orders_count: int
     cancelled_orders_count: int
@@ -36,7 +39,7 @@ class ResponseDriverSchema(BaseModel):
     created_at: datetime
 
     @classmethod
-    def from_domain(cls, driver: Driver) -> 'ResponseDriverSchema':
+    def from_domain(cls, driver: Driver) -> "ResponseDriverSchema":
         return cls(
             id=driver.id,
             first_name=driver.first_name,
@@ -49,6 +52,5 @@ class ResponseDriverSchema(BaseModel):
             status=driver.status,
             on_shift=driver.on_shift,
             on_order=driver.on_order,
-            created_at=driver.created_at
+            created_at=driver.created_at,
         )
-   

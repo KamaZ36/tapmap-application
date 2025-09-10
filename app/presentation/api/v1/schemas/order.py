@@ -28,10 +28,12 @@ class GetOrderSFiltersSchema(BaseModel):
     limit: Optional[int] = 5
     offset: Optional[int] = 0
 
-class CancelOrderSchema(BaseModel): 
+
+class CancelOrderSchema(BaseModel):
     reason: str
 
-class ResponseExtendedOrderSchema(BaseModel): 
+
+class ResponseExtendedOrderSchema(BaseModel):
     id: UUID
     customer: ResponseUserForOrder
     driver: ResponseDriverForOrder | None = None
@@ -47,29 +49,35 @@ class ResponseExtendedOrderSchema(BaseModel):
     feeding_distance: int | None = None
     comment: str | None = None
     created_at: datetime
-    
+
     @classmethod
-    def from_domain(cls, extended_order: ExtendedOrder) -> 'ResponseExtendedOrderSchema':
+    def from_domain(
+        cls, extended_order: ExtendedOrder
+    ) -> "ResponseExtendedOrderSchema":
         extended_order_schema = cls(
-            id=extended_order.id, 
+            id=extended_order.id,
             customer=ResponseUserForOrder(
-                id=extended_order.customer.id, 
-                name=extended_order.customer.name, 
-                phone_number=extended_order.customer.phone_number.value
+                id=extended_order.customer.id,
+                name=extended_order.customer.name,
+                phone_number=extended_order.customer.phone_number.value,
             ),
             driver=ResponseDriverForOrder(
                 id=extended_order.driver.id,
                 phone_number=extended_order.driver.phone_number.value,
-                first_name=extended_order.driver.first_name
-            ) if extended_order.driver else None,
+                first_name=extended_order.driver.first_name,
+            )
+            if extended_order.driver
+            else None,
             city_id=extended_order.city_id,
             vehicle=ResponseVehicleForOrder(
-                id=extended_order.vehicle.id, 
+                id=extended_order.vehicle.id,
                 brand=extended_order.vehicle.brand,
                 model=extended_order.vehicle.model,
                 color=extended_order.vehicle.color,
-                number=extended_order.vehicle.number.value
-            ) if extended_order.vehicle else None,
+                number=extended_order.vehicle.number.value,
+            )
+            if extended_order.vehicle
+            else None,
             points=[asdict(point) for point in extended_order.points],
             status=extended_order.status,
             price=extended_order.price.value,
@@ -79,10 +87,10 @@ class ResponseExtendedOrderSchema(BaseModel):
             feeding_distance=extended_order.feeding_distance,
             feeding_time=extended_order.feeding_time,
             comment=extended_order.comment.text if extended_order.comment else None,
-            created_at=extended_order.created_at
+            created_at=extended_order.created_at,
         )
         return extended_order_schema
-    
+
 
 class ResponseOrderSchema(BaseModel):
     id: UUID
@@ -99,11 +107,11 @@ class ResponseOrderSchema(BaseModel):
     created_at: datetime
 
     @classmethod
-    def from_domain(cls, order: Order) -> 'ResponseOrderSchema':
+    def from_domain(cls, order: Order) -> "ResponseOrderSchema":
         return cls(
-            id=order.id, 
+            id=order.id,
             customer_id=order.customer_id,
-            driver_id=order.driver_id if order.driver_id else None, 
+            driver_id=order.driver_id if order.driver_id else None,
             city_id=order.city_id,
             points=[asdict(point) for point in order.points],
             status=order.status,
@@ -112,5 +120,5 @@ class ResponseOrderSchema(BaseModel):
             travel_time=order.travel_time,
             travel_distance=order.travel_distance,
             comment=order.comment.text if order.comment else None,
-            created_at=order.created_at
+            created_at=order.created_at,
         )
