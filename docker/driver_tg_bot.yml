@@ -1,0 +1,43 @@
+services: 
+
+  driver_tg_bot:
+    container_name: driver_tg_bot
+    build: 
+      context: .
+      dockerfile: ../Dockerfile
+    volumes:
+      - ../app:/src/app
+    networks:
+      - backend_network
+    env_file:
+      - ../.env
+    command: "poetry run python -m app.bots.driver_tg_bot.main"
+    restart: always
+    depends_on:
+      backend_postgres:
+        condition: service_healthy  
+      backend_redis:
+        condition: service_healthy
+
+  driver_tg_bot_consumer:
+    container_name: driver_tg_bot_consumer
+    build: 
+      context: .
+      dockerfile: ../Dockerfile
+    volumes:
+      - ../app:/src/app
+    networks:
+      - backend_network
+    env_file:
+      - ../.env
+    command: "poetry run faststream run --factory app.bots.driver_tg_bot.consumer.main:get_app --reload"
+    restart: always
+    depends_on:
+      backend_postgres:
+        condition: service_healthy  
+      backend_redis:
+        condition: service_healthy
+
+networks:
+  backend_network:
+    external: true

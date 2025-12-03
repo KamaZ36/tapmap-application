@@ -1,0 +1,20 @@
+services:
+
+  dispatcher:
+    container_name: dispatcher
+    build: 
+      context: .
+      dockerfile: ../Dockerfile
+    volumes:
+      - ../app:/src/app
+    networks:
+      - backend_network
+    env_file:
+      - ../.env
+    command: "poetry run faststream run --factory ..app.dispatcher.main:get_app --reload"
+    restart: always
+    depends_on:
+      backend_postgres:
+        condition: service_healthy  
+      backend_redis:
+        condition: service_healthy  

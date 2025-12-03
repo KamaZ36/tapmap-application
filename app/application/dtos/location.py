@@ -1,19 +1,14 @@
 from dataclasses import dataclass
 
 
-@dataclass
-class CoordinatesDTO:
-    latitude: float
-    longitude: float
+@dataclass(kw_only=True)
+class ParsedAddressDTO:
+    city: str | None = None
+    street: str
+    full_address: str
 
 
-@dataclass
-class PointDTO:
-    address: str | None = None
-    coordinates: tuple[float, float] | None = None
-
-
-@dataclass
-class RouteInfoDTO:
-    travel_distance: int
-    travel_time: int
+@dataclass(frozen=True, eq=False)
+class GeocodedInfoDTO:
+    address: str
+    coordinates: tuple[float, float]

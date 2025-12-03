@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from app.domain.exceptions.base import AppException
 
 
-@dataclass
+@dataclass(frozen=True)
 class CommentTooLong(AppException):
     error_code = "ORDER_COMMENT_TOO_LONG"
 
@@ -14,7 +14,7 @@ class CommentTooLong(AppException):
         return f"Слишком длинный комментарий: {self.count_symbols} символов."
 
 
-@dataclass
+@dataclass(frozen=True)
 class CommentEmpty(AppException):
     @property
     def message(self) -> str:

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import re
 
+from app.domain.exceptions.phone_number import InvalidPhoneNumber
 from app.domain.value_objects.base import ValueObject
 
 
@@ -18,10 +19,10 @@ class PhoneNumber(ValueObject):
         elif cleaned.startswith("7"):
             pass
         else:
-            raise ValueError("Телефон должен начинаться с +7, 8 или 7")
+            raise InvalidPhoneNumber(phone_number=self.value)
 
         if not re.fullmatch(r"7\d{10}", cleaned):
-            raise ValueError("Телефон должен быть в формате 79999999999")
+            raise InvalidPhoneNumber(phone_number=self.value)
 
         # Обновляем значение (только через object.__setattr__ из-за frozen=True)
         object.__setattr__(self, "value", cleaned)

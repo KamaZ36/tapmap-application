@@ -7,7 +7,7 @@ from app.domain.entities.vehicle import Vehicle
 from app.domain.value_objects.phone_number import PhoneNumber
 from app.domain.value_objects.vehicle_number import VehicleNumber
 from app.domain.value_objects.coordinates import Coordinates
-from app.domain.enums.user_role import UserRole
+from app.domain.enums.user import UserRole
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 import pytest
 from uuid import uuid4
 
-from app.application.interactions.user.get_user import GetUserInteractor
+from app.application.queries.user.get_by_id import GetUserByIdQueryHandler
 from app.application.dtos.user import CurrentUser
 from app.domain.entities.user import User, UserRole
 from app.domain.value_objects.phone_number import PhoneNumber
@@ -22,7 +22,7 @@ async def test_get_user_interactor_success(user_repository: BaseUserRepository):
 
     current_user = CurrentUser(user_id=user_id, roles=[UserRole.USER])
 
-    interactor = GetUserInteractor(user_repository)
+    interactor = GetUserByIdQueryHandler(user_repository)
 
     # Act
     result = await interactor(current_user, user_id)
@@ -48,7 +48,7 @@ async def test_get_user_interactor_admin_access(user_repository: BaseUserReposit
         roles=[UserRole.ADMIN],
     )
 
-    interactor = GetUserInteractor(user_repository)
+    interactor = GetUserByIdQueryHandler(user_repository)
 
     # Act
     result = await interactor(current_user, user_id)
@@ -74,7 +74,7 @@ async def test_get_user_interactor_no_access(user_repository: BaseUserRepository
         roles=[UserRole.USER],  # Not admin
     )
 
-    interactor = GetUserInteractor(user_repository)
+    interactor = GetUserByIdQueryHandler(user_repository)
 
     # Act & Assert
     from app.application.exceptions.permission import NoAccess

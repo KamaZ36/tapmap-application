@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from app.application.exceptions.base import LogicException
 
 
-@dataclass
+@dataclass(frozen=True)
 class VehicleNotFound(LogicException):
     error_code: str = "VEHICLE_NOT_FOUND"
 

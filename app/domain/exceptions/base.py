@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class AppException(Exception):
     error_code: str = "APP_ERROR"
 

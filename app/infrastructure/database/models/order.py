@@ -2,19 +2,26 @@ from dataclasses import asdict
 from decimal import Decimal
 from uuid import UUID
 
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID, ENUM, JSON
+from sqlalchemy import ForeignKey, DECIMAL
+
 from app.domain.entities.order import Order, OrderStatus
 from app.domain.value_objects.coordinates import Coordinates
 from app.domain.value_objects.money import Money
 from app.domain.value_objects.order_comment import OrderComment
 from app.domain.value_objects.order_point import OrderPoint
-from app.infrastructure.database.models.base import BaseModel
 
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID, ENUM, JSON
-from sqlalchemy import ForeignKey, DECIMAL
+from app.infrastructure.database.models.base import (
+    BaseModel,
+    CreatedAtMixin,
+    UpdatedAtMixin,
+)
+from app.infrastructure.database.models.driver import DriverModel
+from app.infrastructure.database.models.user import UserModel
 
 
-class OrderModel(BaseModel):
+class OrderModel(BaseModel, CreatedAtMixin, UpdatedAtMixin):
     __tablename__ = "orders"
 
     id: Mapped[UUID] = mapped_column(
@@ -41,11 +48,11 @@ class OrderModel(BaseModel):
     status: Mapped[OrderStatus] = mapped_column(
         ENUM(OrderStatus, name="order_status"),
         nullable=False,
-        server_default=OrderStatus.driver_search.value,
-        default=OrderStatus.driver_search,
+        server_default=OrderStatus.draft.value,
+        default=OrderStatus.draft,
     )
 
-    price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False)
+    price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=True)
     service_commission: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False)
 
     travel_distance: Mapped[int] = mapped_column(nullable=False)
@@ -55,6 +62,12 @@ class OrderModel(BaseModel):
     feeding_time: Mapped[int] = mapped_column(nullable=True)
 
     comment: Mapped[str] = mapped_column(nullable=True)
+
+    driver: Mapped[DriverModel] = relationship(
+        DriverModel,
+        foreign_keys=[driver_id],
+    )
+    customer: Mapped[UserModel] = relationship(UserModel, foreign_keys=[customer_id])
 
     @classmethod
     def from_entity(cls, order: Order) -> "OrderModel":

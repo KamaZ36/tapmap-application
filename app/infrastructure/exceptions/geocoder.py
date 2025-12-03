@@ -4,3 +4,7 @@ class IncorrectGeolocation(Exception):
 
 class GeocodingFailed(Exception):
     pass
+
+
+class LotsOfGeocodingResults(Exception):
+    address: str

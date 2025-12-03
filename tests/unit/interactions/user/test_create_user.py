@@ -1,7 +1,7 @@
 import pytest
 
 from app.domain.entities.user import User
-from app.application.interactions.user.create_user import CreateUserInteraction
+from app.application.commands.user.create_user import CreateUserCommandHandler
 from app.application.commands.user import CreateUserCommand
 from app.infrastructure.repositories.user.base import BaseUserRepository
 from tests.unit.repositories.fake_transaction_manager import FakeTransactionManager
@@ -11,7 +11,7 @@ from tests.unit.repositories.fake_transaction_manager import FakeTransactionMana
 async def test_create_user_interactor_success(
     user_repository: BaseUserRepository, transaction_manager: FakeTransactionManager
 ):
-    interactor = CreateUserInteraction(user_repository, transaction_manager)
+    interactor = CreateUserCommandHandler(user_repository, transaction_manager)
 
     test_data = CreateUserCommand(name="Test User", phone_number="79999999999")
 
@@ -31,7 +31,7 @@ async def test_create_user_interactor_success(
 async def test_create_user_interactor_with_invalid_phone(
     user_repository: BaseUserRepository, transaction_manager: FakeTransactionManager
 ):
-    interactor = CreateUserInteraction(user_repository, transaction_manager)
+    interactor = CreateUserCommandHandler(user_repository, transaction_manager)
 
     test_data = CreateUserCommand(name="Test User", phone_number="invalid_phone")
 

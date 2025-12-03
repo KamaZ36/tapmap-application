@@ -3,35 +3,35 @@ from dataclasses import dataclass
 from app.domain.exceptions.base import AppException
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverIsNotOrder(AppException):
     @property
     def message(self) -> str:
         return "Водитель не выполняет заказ"
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverAlreadyOnShift(AppException):
     @property
     def message(self) -> str:
         return "Водитель уже на смене"
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverIsNotShift(AppException):
     @property
     def message(self) -> str:
         return "Водитель не на смене"
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverAlreadyOnOrder(AppException):
     @property
     def message(self) -> str:
         return "Водитель уже на заказе"
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverIsBlocked(AppException):
     @property
     def message(self) -> str:

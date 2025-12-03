@@ -1,20 +1,19 @@
 from dataclasses import dataclass
+from typing import Any
 from uuid import UUID
 from datetime import datetime
 from decimal import Decimal
 
-from app.domain.entities.driver import Driver
-from app.domain.entities.user import User
-from app.domain.entities.vehicle import Vehicle
 from app.domain.enums.order_status import OrderStatus
-from app.domain.value_objects.money import Money
-from app.domain.value_objects.order_comment import OrderComment
-from app.domain.value_objects.phone_number import PhoneNumber
 from app.domain.value_objects.order_point import OrderPoint
+
+from app.application.dtos.driver import DriverForOrderDTO
+from app.application.dtos.user import UserForOrderDTO
+from app.application.dtos.vehicle import VehicleForOrderDTO
 
 
 @dataclass(frozen=True)
-class GetOrdersFilters:
+class GetOrdersListFilters:
     customer_id: UUID | None = None
     driver_id: UUID | None = None
     city_id: UUID | None = None
@@ -30,19 +29,25 @@ class GetOrdersFilters:
 
 
 @dataclass(frozen=True, kw_only=True)
-class ExtendedOrder:
+class OrderDTO:
     id: UUID
-    customer: User
-    driver: Driver | None = None
+    customer: UserForOrderDTO
+    driver: DriverForOrderDTO | None = None
     city_id: UUID
-    vehicle: Vehicle | None = None
+    vehicle: VehicleForOrderDTO | None = None
     points: list[OrderPoint]
     status: OrderStatus
-    price: Money
-    service_commission: Money
-    travel_time: int
-    travel_distance: int
+    price: Decimal | None
+    service_commission: Decimal | None
+    travel_time: int | None
+    travel_distance: int | None
     feeding_time: int | None = None
     feeding_distance: int | None = None
-    comment: OrderComment | None = None
+    comment: str | None = None
+    created_at: datetime
+
+
+@dataclass(frozen=True, eq=False, kw_only=True)
+class OrderForListDTO:
+    id: UUID
     created_at: datetime

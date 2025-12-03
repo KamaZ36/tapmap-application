@@ -1,13 +1,13 @@
 import pytest
 from uuid import uuid4
 
-from app.application.interactions.driver.create_driver import CreateDriverInteraction
+from app.application.commands.driver.create import CreateDriverCommandHandler
 from app.application.commands.driver import CreateDriverCommand
 from app.application.dtos.user import CurrentUser
 from app.application.exceptions.permission import NoAccess
 from app.domain.entities.driver import Driver
 from app.domain.entities.user import User
-from app.domain.enums.user_role import UserRole
+from app.domain.enums.user import UserRole
 from app.domain.value_objects.phone_number import PhoneNumber
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
@@ -23,7 +23,7 @@ async def test_create_driver_interactor_success(
 ):
     """Тест успешного создания водителя администратором"""
     # Arrange
-    interactor = CreateDriverInteraction(
+    interactor = CreateDriverCommandHandler(
         driver_repository=driver_repository,
         user_repository=user_repository,
         transaction_manager=transaction_manager,
@@ -85,7 +85,7 @@ async def test_create_driver_interactor_no_permission(
 ):
     """Тест создания водителя без прав администратора"""
     # Arrange
-    interactor = CreateDriverInteraction(
+    interactor = CreateDriverCommandHandler(
         driver_repository=driver_repository,
         user_repository=user_repository,
         transaction_manager=transaction_manager,
@@ -128,7 +128,7 @@ async def test_create_driver_interactor_user_not_found(
 ):
     """Тест создания водителя для несуществующего пользователя"""
     # Arrange
-    interactor = CreateDriverInteraction(
+    interactor = CreateDriverCommandHandler(
         driver_repository=driver_repository,
         user_repository=user_repository,
         transaction_manager=transaction_manager,
@@ -163,7 +163,7 @@ async def test_create_driver_interactor_without_middle_name(
 ):
     """Тест создания водителя без отчества"""
     # Arrange
-    interactor = CreateDriverInteraction(
+    interactor = CreateDriverCommandHandler(
         driver_repository=driver_repository,
         user_repository=user_repository,
         transaction_manager=transaction_manager,
@@ -203,7 +203,7 @@ async def test_create_driver_interactor_multiple_admin_roles(
 ):
     """Тест создания водителя пользователем с несколькими ролями включая админа"""
     # Arrange
-    interactor = CreateDriverInteraction(
+    interactor = CreateDriverCommandHandler(
         driver_repository=driver_repository,
         user_repository=user_repository,
         transaction_manager=transaction_manager,

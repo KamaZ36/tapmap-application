@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from uuid import UUID
 
 from app.domain.entities.base import Entity
-from app.domain.enums.user_role import UserRole
+from app.domain.enums.user import UserRole, UserStatus
 from app.domain.value_objects.phone_number import PhoneNumber
 
 
@@ -11,8 +12,10 @@ class User(Entity):
     name: str
     phone_number: PhoneNumber
 
-    completed_orders_count: int = 0
-    cancelled_orders_count: int = 0
+    completed_orders_count: int = field(default=0)
+    cancelled_orders_count: int = field(default=0)
+
+    status: UserStatus = field(default=UserStatus.active)
 
     roles: list[UserRole] = field(default_factory=lambda: [UserRole.user])
 
@@ -38,3 +41,16 @@ class User(Entity):
     def remove_role(self, role: UserRole) -> None:
         if role in self.roles:
             self.roles.remove(role)
+
+    def block(self) -> None:
+        self.status = UserStatus.blocked
+
+    def unblock(self) -> None:
+        self.status = UserStatus.active
+
+
+@dataclass(kw_only=True)
+class UserBlocking(Entity):
+    user_id: UUID
+    reason: str
+    expires_at: datetime

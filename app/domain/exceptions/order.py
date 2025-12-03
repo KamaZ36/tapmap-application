@@ -5,7 +5,7 @@ from app.domain.enums.order_status import OrderStatus
 from app.domain.exceptions.base import AppException
 
 
-@dataclass
+@dataclass(frozen=True)
 class InvalidOrderStatusTransition(AppException):
     current_status: OrderStatus
     new_status: OrderStatus | None
@@ -17,7 +17,7 @@ class InvalidOrderStatusTransition(AppException):
         )
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverAlreadyAssignedToOrder(AppException):
     order_id: UUID
     assigned_driver: UUID
@@ -27,8 +27,15 @@ class DriverAlreadyAssignedToOrder(AppException):
         return f"На заказ {str(self.order_id)} уже назначен водитель {str(self.assigned_driver)}."
 
 
-@dataclass
+@dataclass(frozen=True)
 class OrderCannotTwoPoints(AppException):
     @property
     def message(self) -> str:
         return f"В заказе должно присутствовать минимум 2 точки."
+
+
+@dataclass(frozen=True, eq=False)
+class OrderCannotBeConfirmedWithoutPriceError(Exception):
+    @property
+    def message(self) -> str:
+        return "Невозможно подтвердить заказ без расчета цены."

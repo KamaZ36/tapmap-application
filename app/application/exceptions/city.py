@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from app.application.exceptions.base import LogicException
 
 
-@dataclass
+@dataclass(frozen=True)
 class CityNotSupported(LogicException):
     error_code: str = "CITY_NOT_SUPPORTED"
 
@@ -12,7 +12,7 @@ class CityNotSupported(LogicException):
         return f"Указанное место не поддерживается сервисом."
 
 
-@dataclass
+@dataclass(frozen=True)
 class CityNotFound(LogicException):
     error_code: str = "CITY_NOT_FOUND"
 

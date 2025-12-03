@@ -6,7 +6,7 @@ from app.domain.exceptions.order import (
     InvalidOrderStatusTransition,
     OrderCannotTwoPoints,
 )
-from app.domain.utils.uuid_v7 import uuid7
+from app.utils.uuid_v7 import uuid7
 from app.domain.entities.order import Order, OrderStatus
 from app.domain.value_objects.coordinates import Coordinates
 from app.domain.value_objects.money import Money

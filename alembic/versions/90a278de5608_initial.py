@@ -63,6 +63,7 @@ def upgrade() -> None:
 
     if not enum_exists("order_status"):
         order_status_enum = postgresql.ENUM(
+            "draft",
             "driver_search",
             "waiting_driver",
             "driver_waiting_customer",
@@ -74,6 +75,7 @@ def upgrade() -> None:
         )
     else:
         order_status_enum = postgresql.ENUM(
+            "draft",
             "driver_search",
             "waiting_driver",
             "driver_waiting_customer",
@@ -228,9 +230,7 @@ def upgrade() -> None:
         sa.Column("driver_id", sa.UUID(), nullable=True),
         sa.Column("city_id", sa.UUID(), nullable=False),
         sa.Column("points", postgresql.JSON(astext_type=sa.Text()), nullable=False),
-        sa.Column(
-            "status", order_status_enum, server_default="driver_search", nullable=False
-        ),
+        sa.Column("status", order_status_enum, server_default="draft", nullable=False),
         sa.Column("price", sa.DECIMAL(precision=10, scale=2), nullable=False),
         sa.Column(
             "service_commission", sa.DECIMAL(precision=10, scale=2), nullable=False

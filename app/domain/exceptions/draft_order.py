@@ -4,7 +4,7 @@ from app.domain.exceptions.base import AppException
 from app.domain.value_objects.order_point import OrderPoint
 
 
-@dataclass
+@dataclass(frozen=True)
 class ConsecutiveDuplicatePointError(AppException):
     new_point: OrderPoint
     prev_point: OrderPoint
@@ -17,7 +17,7 @@ class ConsecutiveDuplicatePointError(AppException):
         return f"Новая точка ({new_point_coordinates}) совпадает с предыдущей ({prev_point_coordinates})"
 
 
-@dataclass
+@dataclass(frozen=True)
 class InvalidRoutePointIndexError(AppException):
     index: int
     route_len: int

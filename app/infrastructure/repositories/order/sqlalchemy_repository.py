@@ -1,10 +1,10 @@
 from dataclasses import asdict
 from uuid import UUID
 
-from sqlalchemy import ScalarResult, and_, between, select, update
+from sqlalchemy import ScalarResult, and_, between, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.application.dtos.order import GetOrdersFilters
+from app.application.dtos.order import GetOrdersListFilters
 from app.application.exceptions.order import OrderNotFound
 from app.infrastructure.database.models.order import OrderModel
 from app.infrastructure.repositories.order.base import BaseOrderRepository
@@ -26,13 +26,7 @@ class SQLAlchemyOrderRepository(BaseOrderRepository):
         order_model = result.scalar_one_or_none()
         return order_model.to_entity() if order_model else None
 
-    async def try_get_by_id(self, order_id: UUID) -> Order | None:
-        order = await self.get_by_id(order_id)
-        if order is None:
-            raise OrderNotFound()
-        return order
-
-    async def get_filtered_orders(self, filters: GetOrdersFilters) -> list[Order]:
+    async def get_filtered_orders(self, filters: GetOrdersListFilters) -> list[Order]:
         query = select(OrderModel)
 
         conditions = []
@@ -71,13 +65,14 @@ class SQLAlchemyOrderRepository(BaseOrderRepository):
         orders = [order.to_entity() for order in order_models]
         return orders
 
-    async def get_active_for_customer(self, customer_id: UUID) -> Order:
+    async def get_active_for_customer(self, customer_id: UUID) -> Order | None:
         query = (
             select(OrderModel)
             .where(
                 OrderModel.customer_id == customer_id,
                 OrderModel.status.in_(
                     [
+                        OrderStatus.draft.value,
                         OrderStatus.driver_search.value,
                         OrderStatus.waiting_driver.value,
                         OrderStatus.driver_waiting_customer.value,
@@ -88,21 +83,23 @@ class SQLAlchemyOrderRepository(BaseOrderRepository):
             .limit(1)
         )
         result = await self.session.execute(query)
-        order_model: OrderModel | None = result.scalar_one_or_none()
-        if order_model is None:
-            raise OrderNotFound()
-        return order_model.to_entity()
+        order_model = result.scalar_one_or_none()
+        return order_model.to_entity() if order_model else None
 
     async def get_active_for_driver(self, driver_id: UUID) -> Order:
-        query = select(OrderModel).where(
-            OrderModel.driver_id == driver_id,
-            OrderModel.status.in_(
-                [
-                    OrderStatus.waiting_driver.value,
-                    OrderStatus.driver_waiting_customer.value,
-                    OrderStatus.processing.value,
-                ]
-            ),
+        query = (
+            select(OrderModel)
+            .where(
+                OrderModel.driver_id == driver_id,
+                OrderModel.status.in_(
+                    [
+                        OrderStatus.waiting_driver.value,
+                        OrderStatus.driver_waiting_customer.value,
+                        OrderStatus.processing.value,
+                    ]
+                ),
+            )
+            .limit(1)
         )
         result = await self.session.execute(query)
         order_model: OrderModel | None = result.scalar_one_or_none()
@@ -119,7 +116,9 @@ class SQLAlchemyOrderRepository(BaseOrderRepository):
                 points=[asdict(point) for point in order.points],
                 status=order.status,
                 price=order.price.value,
-                service_commission=order.service_commission.value,
+                service_commission=order.service_commission.value
+                if order.service_commission
+                else None,
                 travel_distance=order.travel_distance,
                 travel_time=order.travel_time,
                 feeding_distance=order.feeding_distance,
@@ -127,4 +126,8 @@ class SQLAlchemyOrderRepository(BaseOrderRepository):
                 comment=order.comment.text if order.comment else None,
             )
         )
+        await self.session.execute(stmt)
+
+    async def delete(self, order_id: UUID) -> None:
+        stmt = delete(OrderModel).where(OrderModel.id == order_id)
         await self.session.execute(stmt)

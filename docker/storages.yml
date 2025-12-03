@@ -1,0 +1,47 @@
+services:
+  
+  backend_postgres:
+    image: postgis/postgis:16-3.4
+    container_name: backend_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../pgdata:/var/lib/postgresql/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "database"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend_redis: 
+    image: redis:latest
+    container_name: backend_redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ../redis_data:/data
+    restart: unless-stopped
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+volumes:
+  pgdata:
+  redis_data:
+
+networks:
+  backend_network:
+    name: backend_network
+    driver: bridge

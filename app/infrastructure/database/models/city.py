@@ -10,10 +10,14 @@ from sqlalchemy import DECIMAL
 
 from app.domain.entities.city import City
 
-from app.infrastructure.database.models.base import BaseModel
+from app.infrastructure.database.models.base import (
+    BaseModel,
+    CreatedAtMixin,
+    UpdatedAtMixin,
+)
 
 
-class CityModel(BaseModel):
+class CityModel(BaseModel, CreatedAtMixin, UpdatedAtMixin):
     __tablename__ = "cities"
 
     id: Mapped[UUID] = mapped_column(

@@ -1,7 +1,7 @@
-from app.domain.utils.uuid_v7 import uuid7
+from app.utils.uuid_v7 import uuid7
 from app.domain.entities.user import User
 from app.domain.value_objects.phone_number import PhoneNumber
-from app.domain.enums.user_role import UserRole
+from app.domain.enums.user import UserRole
 
 
 def test_create_user_success() -> None:

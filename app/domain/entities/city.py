@@ -5,7 +5,6 @@ from shapely.geometry import Point as SH_Point
 from shapely import Polygon, LineString
 
 from app.domain.entities.base import Entity
-from app.domain.exceptions.city import InvalidPolygon
 from app.domain.value_objects.order_point import OrderPoint
 
 

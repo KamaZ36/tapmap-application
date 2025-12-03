@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from app.domain.exceptions.base import AppException
 
 
-@dataclass
+@dataclass(frozen=True)
 class LogicException(AppException):
     error_code: str = "LOGIC_ERROR"
 

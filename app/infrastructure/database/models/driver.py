@@ -8,13 +8,17 @@ from shapely import Point as SH_Point
 from app.domain.entities.driver import Driver, DriverStatus
 from app.domain.value_objects.coordinates import Coordinates
 from app.domain.value_objects.phone_number import PhoneNumber
-from app.infrastructure.database.models.base import BaseModel
+from app.infrastructure.database.models.base import (
+    BaseModel,
+    CreatedAtMixin,
+    UpdatedAtMixin,
+)
 
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID, ENUM
 
 
-class DriverModel(BaseModel):
+class DriverModel(BaseModel, CreatedAtMixin, UpdatedAtMixin):
     __tablename__ = "drivers"
 
     id: Mapped[UUID] = mapped_column(
@@ -74,7 +78,7 @@ class DriverModel(BaseModel):
         if self.last_location:
             sh_point = to_shape(self.last_location)
             if isinstance(sh_point, SH_Point):
-                coordinates = Coordinates(latitude=sh_point.y, longitude=sh_point.x)
+                coordinates = Coordinates(longitude=sh_point.y, latitude=sh_point.x)
         return Driver(
             id=self.id,
             first_name=self.first_name,

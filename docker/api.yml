@@ -1,0 +1,26 @@
+services: 
+
+  api:
+    container_name: api
+    build: 
+      context: .
+      dockerfile: ../Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ../app:/src/app
+    networks:
+      - backend_network
+    env_file:
+      - ../.env
+    command: "poetry run uvicorn --factory app.api.main:create_app --reload --host 0.0.0.0 --port 8000"
+    restart: always
+    depends_on:
+      backend_postgres:
+        condition: service_healthy  
+      backend_redis:
+        condition: service_healthy
+
+networks:
+  backend_network:
+    external: true

@@ -35,23 +35,12 @@ class Driver(Entity):
         self.on_shift = status
 
     def start_shift(self) -> None:
-        """Выйти на смену
+        """Выйти на смену"""
 
-        Raises:
-            DriverAlreadyOnShift: Водитель уже на смене
-        """
-        if self.on_shift:
-            raise DriverAlreadyOnShift()
         self.on_shift = True
 
     def end_shift(self) -> None:
-        """Уйти со смены
-
-        Raises:
-            DriverIsNotShift: Водитель не на смене
-        """
-        if not self.on_shift:
-            raise DriverIsNotShift()
+        """Уйти со смены"""
         self.on_shift = False
 
     def assign_to_order(self) -> None:

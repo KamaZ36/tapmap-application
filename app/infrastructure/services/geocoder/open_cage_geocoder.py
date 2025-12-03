@@ -1,9 +1,13 @@
 from httpx import HTTPError
-from app.settings import settings
+from app.application.dtos.location import GeocodedInfoDTO
+from app.core.config import settings
 
 from app.application.exceptions.geolocation import GeocodingServiceUnavailable
 
-from app.infrastructure.exceptions.geocoder import GeocodingFailed, IncorrectGeolocation
+from app.domain.value_objects.coordinates import Coordinates
+from app.infrastructure.exceptions.geocoder import (
+    GeocodingFailed,
+)
 from app.infrastructure.services.geocoder.base import BaseGeocoder
 from app.infrastructure.services.http_client.base import BaseHttpClient
 
@@ -14,10 +18,11 @@ class Geocoder(BaseGeocoder):
     def __init__(self, http_client: BaseHttpClient) -> None:
         self.http_client = http_client
 
-    async def get_coordinates(self, address: str) -> dict:
+    async def get_coordinates(self, address: str) -> GeocodedInfoDTO | None:
         params = {
-            "q": address,
+            "q": f"Россия, {address}",
             "key": settings.geocoder_api_key,
+            "language": "ru",
         }
         try:
             data = await self.http_client.get(self.BASE_URL, params=params)
@@ -25,10 +30,11 @@ class Geocoder(BaseGeocoder):
         except HTTPError:
             raise GeocodingServiceUnavailable()
 
-    async def get_address(self, latitude: float, longitude: float) -> dict:
+    async def get_address(self, coordinates: Coordinates) -> GeocodedInfoDTO | None:
         params = {
-            "q": f"{longitude},{latitude}",
+            "q": f"{coordinates.latitude},{coordinates.longitude}",
             "key": settings.geocoder_api_key,
+            "language": "ru",
         }
         try:
             data = await self.http_client.get(self.BASE_URL, params=params)
@@ -36,11 +42,11 @@ class Geocoder(BaseGeocoder):
         except HTTPError:
             raise GeocodingServiceUnavailable()
 
-    def _parse(self, response: dict) -> dict:
+    def _parse(self, response: dict) -> GeocodedInfoDTO | None:
         if response["status"]["code"] != 200:
             raise GeocodingFailed(response)
         if response.get("total_results", 0) == 0:
-            raise IncorrectGeolocation()
+            return None
 
         data = response["results"][0]["components"]
         geometry = response["results"][0]["geometry"]
@@ -51,9 +57,6 @@ class Geocoder(BaseGeocoder):
 
         address = f"{city}, {road} {house_number}".strip().strip(",")
 
-        return {
-            "address": address,
-            "coordinates": {"latitude": geometry["lat"], "longitude": geometry["lng"]},
-            "city": city,
-            "state": data.get("state", ""),
-        }
+        return GeocodedInfoDTO(
+            address=address, coordinates=(geometry["lat"], geometry["lng"])
+        )

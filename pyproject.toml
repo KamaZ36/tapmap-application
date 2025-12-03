@@ -14,7 +14,7 @@ pydantic-settings = "^2.9.1"
 sqlalchemy = "^2.0.41"
 asyncpg = "^0.30.0"
 geoalchemy2 = "^0.17.1"
-httpx = "^0.28.1"
+httpx = {extras = ["http2"], version = "^0.28.1"}
 uvicorn = "^0.34.3"
 pyjwt = "^2.10.1"
 dishka = "^1.6.0"
@@ -24,10 +24,10 @@ pytest-asyncio = "^1.0.0"
 python-multipart = "^0.0.20"
 aiokafka = "^0.12.0"
 aiogram = "^3.22.0"
-faststream = "^0.5.48"
+faststream = {extras = ["cli"], version = "^0.5.48"}
 orjson = "^3.11.3"
 adaptix = "^3.0.0b11"
-ruff = "^0.12.12"
+h2 = "^4.3.0"
 
 
 [tool.poetry.group.dev.dependencies]

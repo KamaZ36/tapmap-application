@@ -6,10 +6,12 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.infrastructure.database.models.user import UserModel
+from app.infrastructure.database.models.user import BlockingUserModel
 from app.infrastructure.database.models.driver import DriverModel
 from app.infrastructure.database.models.vehicles import VehicleModel
 from app.infrastructure.database.models.city import CityModel
 from app.infrastructure.database.models.order import OrderModel
+from app.infrastructure.database.models.tg_bot_session import TgBotAuthSessionModel
 from app.infrastructure.database.models.base import BaseModel
 
 # this is the Alembic Config object, which provides

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from app.application.exceptions.base import LogicException
 
 
-@dataclass
+@dataclass(frozen=True)
 class DraftOrderNotFound(LogicException):
     error_code: str = "DRAFT_ORDER_NOT_FOUND"
 
@@ -12,7 +12,7 @@ class DraftOrderNotFound(LogicException):
         return "Черновик заказа не найден"
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class InvalidLocation(LogicException):
     error_code: str = "INVALID_LOCATION"
     location: str | tuple[float, float]

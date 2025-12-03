@@ -6,7 +6,7 @@ from app.infrastructure.repositories.user.sqlalchemy_repository import (
 )
 from app.domain.entities.user import User
 from app.domain.value_objects.phone_number import PhoneNumber
-from app.domain.enums.user_role import UserRole
+from app.domain.enums.user import UserRole
 
 
 @pytest.mark.integration

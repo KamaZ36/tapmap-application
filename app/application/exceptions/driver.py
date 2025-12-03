@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from app.application.exceptions.base import LogicException
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverNotFound(LogicException):
     error_code: str = "DRIVER_NOT_FOUND"
 
@@ -11,7 +11,7 @@ class DriverNotFound(LogicException):
         return "Водитель не найден"
 
 
-@dataclass
+@dataclass(frozen=True)
 class DriverLastLocationNotSet(LogicException):
     error_code: str = "DRIVER_LAST_LOCATION_NOT_SET"
 

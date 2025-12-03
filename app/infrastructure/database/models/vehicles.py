@@ -7,10 +7,14 @@ from sqlalchemy import ForeignKey
 from app.domain.entities.vehicle import Vehicle
 from app.domain.value_objects.vehicle_number import VehicleNumber
 
-from app.infrastructure.database.models.base import BaseModel
+from app.infrastructure.database.models.base import (
+    BaseModel,
+    CreatedAtMixin,
+    UpdatedAtMixin,
+)
 
 
-class VehicleModel(BaseModel):
+class VehicleModel(BaseModel, CreatedAtMixin, UpdatedAtMixin):
     __tablename__ = "vehicles"
 
     id: Mapped[UUID] = mapped_column(

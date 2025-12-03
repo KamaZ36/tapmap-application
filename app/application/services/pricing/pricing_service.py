@@ -10,5 +10,5 @@ class PricingService:
         return Money(amount)
 
     def calculate_commission(self, city: City, price: Money) -> Money:
-        commission = price * city.service_commission_pct
+        commission = price * (city.service_commission_pct / 100)
         return commission

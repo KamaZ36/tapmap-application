@@ -1,0 +1,2 @@
+class AuthSessionNotFound(Exception):
+    pass
