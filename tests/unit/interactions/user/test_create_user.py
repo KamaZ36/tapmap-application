@@ -1,8 +1,10 @@
 import pytest
 
-from app.domain.entities.user import User
-from app.application.commands.user.create_user import CreateUserCommandHandler
-from app.application.commands.user import CreateUserCommand
+from app.application.dtos.user import UserDTO
+from app.application.commands.user.create_user import (
+    CreateUserCommand,
+    CreateUserCommandHandler,
+)
 from app.infrastructure.repositories.user.base import BaseUserRepository
 from tests.unit.repositories.fake_transaction_manager import FakeTransactionManager
 
@@ -17,12 +19,13 @@ async def test_create_user_interactor_success(
 
     result = await interactor(test_data)
 
-    assert isinstance(result, User)
+    assert isinstance(result, UserDTO)
     assert result.name == "Test User"
-    assert result.phone_number.value == "79999999999"
+    assert result.phone_number == "79999999999"
 
     user_in_repo = await user_repository.get_by_id(result.id)
-    assert user_in_repo == result
+    assert user_in_repo is not None
+    assert user_in_repo.name == "Test User"
 
     assert transaction_manager.committed
 
@@ -35,5 +38,7 @@ async def test_create_user_interactor_with_invalid_phone(
 
     test_data = CreateUserCommand(name="Test User", phone_number="invalid_phone")
 
-    with pytest.raises(ValueError):
+    from app.domain.exceptions.phone_number import InvalidPhoneNumber
+
+    with pytest.raises(InvalidPhoneNumber):
         await interactor(test_data)

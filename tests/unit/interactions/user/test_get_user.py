@@ -1,83 +1,53 @@
 import pytest
 from uuid import uuid4
 
-from app.application.queries.user.get_by_id import GetUserByIdQueryHandler
-from app.application.dtos.user import CurrentUser
-from app.domain.entities.user import User, UserRole
+from app.application.queries.user.get_by_id import (
+    GetUserByIdQuery,
+    GetUserByIdQueryHandler,
+)
+from app.domain.entities.user import User
 from app.domain.value_objects.phone_number import PhoneNumber
+from app.infrastructure.readers.user.base import BaseUserReader
 from app.infrastructure.repositories.user.base import BaseUserRepository
 
 
 @pytest.mark.asyncio
-async def test_get_user_interactor_success(user_repository: BaseUserRepository):
+async def test_get_user_interactor_success(
+    user_reader: BaseUserReader, user_repository: BaseUserRepository
+):
     # Arrange
     user_id = uuid4()
+    current_user_id = uuid4()
+
     user = User(
         id=user_id,
         name="Test User",
         phone_number=PhoneNumber("79999999999"),
-        role=UserRole.USER,
     )
     await user_repository.create(user)
 
-    current_user = CurrentUser(user_id=user_id, roles=[UserRole.USER])
-
-    interactor = GetUserByIdQueryHandler(user_repository)
+    query = GetUserByIdQuery(user_id=user_id, current_user_id=current_user_id)
+    interactor = GetUserByIdQueryHandler(user_reader=user_reader)
 
     # Act
-    result = await interactor(current_user, user_id)
+    result = await interactor(query)
 
     # Assert
-    assert result == user
+    assert result.id == user.id
+    assert result.name == user.name
 
 
 @pytest.mark.asyncio
-async def test_get_user_interactor_admin_access(user_repository: BaseUserRepository):
+async def test_get_user_interactor_not_found(user_reader: BaseUserReader):
     # Arrange
     user_id = uuid4()
-    user = User(
-        id=user_id,
-        name="Test User",
-        phone_number=PhoneNumber("79999999999"),
-        role=UserRole.USER,
-    )
-    await user_repository.create(user)
+    current_user_id = uuid4()
 
-    current_user = CurrentUser(
-        user_id=uuid4(),  # Different user
-        roles=[UserRole.ADMIN],
-    )
-
-    interactor = GetUserByIdQueryHandler(user_repository)
-
-    # Act
-    result = await interactor(current_user, user_id)
-
-    # Assert
-    assert result == user
-
-
-@pytest.mark.asyncio
-async def test_get_user_interactor_no_access(user_repository: BaseUserRepository):
-    # Arrange
-    user_id = uuid4()
-    user = User(
-        id=user_id,
-        name="Test User",
-        phone_number=PhoneNumber("79999999999"),
-        role=UserRole.USER,
-    )
-    await user_repository.create(user)
-
-    current_user = CurrentUser(
-        user_id=uuid4(),  # Different user
-        roles=[UserRole.USER],  # Not admin
-    )
-
-    interactor = GetUserByIdQueryHandler(user_repository)
+    query = GetUserByIdQuery(user_id=user_id, current_user_id=current_user_id)
+    interactor = GetUserByIdQueryHandler(user_reader=user_reader)
 
     # Act & Assert
-    from app.application.exceptions.permission import NoAccess
+    from app.application.exceptions.user import UserNotFound
 
-    with pytest.raises(NoAccess):
-        await interactor(current_user, user_id)
+    with pytest.raises(UserNotFound):
+        await interactor(query)

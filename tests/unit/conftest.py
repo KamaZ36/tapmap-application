@@ -13,6 +13,7 @@ def test_driver() -> Driver:
         first_name="Виктор",
         last_name="Викторович",
         phone_number=PhoneNumber("79999999999"),
+        license_number="1234567890",
     )
 
 

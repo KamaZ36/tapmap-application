@@ -1,4 +1,6 @@
 import pytest
+
+from app.domain.exceptions.phone_number import InvalidPhoneNumber
 from app.domain.value_objects.phone_number import PhoneNumber
 
 
@@ -20,15 +22,15 @@ def test_phone_number_valid_plus7_prefix() -> None:
 
 
 def test_phone_number_invalid_prefix() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidPhoneNumber):
         PhoneNumber("59991234567")  # Не начинается с 7, 8 или +7
 
 
 def test_phone_number_invalid_length() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidPhoneNumber):
         PhoneNumber("7999123456")  # 9 цифр после 7 — слишком короткий
 
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidPhoneNumber):
         PhoneNumber("799912345678")  # 11 цифр после 7 — слишком длинный
 
 

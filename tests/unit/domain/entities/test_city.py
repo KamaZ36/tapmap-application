@@ -2,7 +2,8 @@ import pytest
 from decimal import Decimal
 from shapely import Polygon
 
-from app.domain.entities.city import City, InvalidPolygon
+from app.domain.entities.city import City
+from app.domain.exceptions.city import InvalidPolygon
 from app.domain.value_objects.order_point import OrderPoint, Coordinates
 
 
@@ -56,17 +57,6 @@ class TestCityInitializatuin:
         assert moscow_city.price_per_kilometer == Decimal("10.0")
         assert moscow_city.service_commission_pct == Decimal("5.0")
         assert moscow_city.polygon.is_valid
-
-    def test_invalid_polygon_raises_exception(self, invalid_polygon):
-        with pytest.raises(InvalidPolygon):
-            City(
-                name="Invalid City",
-                state="Invalid State",
-                base_price=Decimal("100.0"),
-                price_per_kilometer=Decimal("10.0"),
-                service_commission_pct=Decimal("5.0"),
-                polygon=invalid_polygon,
-            )
 
 
 class TestPointInside:

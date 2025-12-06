@@ -23,7 +23,6 @@ class TestUserRepositoryIntegration:
             id=uuid4(),
             name="Integration Test User",
             phone_number=PhoneNumber("79999999999"),
-            role=UserRole.USER,
         )
 
         # Act
@@ -35,7 +34,7 @@ class TestUserRepositoryIntegration:
         assert retrieved_user.id == user.id
         assert retrieved_user.name == user.name
         assert retrieved_user.phone_number.value == user.phone_number.value
-        assert retrieved_user.role == user.role
+        assert retrieved_user.roles == user.roles
 
     @pytest.mark.asyncio
     async def test_get_by_phone_number(self, user_repository: SQLAlchemyUserRepository):
@@ -46,7 +45,6 @@ class TestUserRepositoryIntegration:
             id=uuid4(),
             name="Phone Test User",
             phone_number=PhoneNumber(phone),
-            role=UserRole.USER,
         )
         await user_repository.create(user)
 

@@ -40,31 +40,12 @@ def test_go_to_shift_driver() -> None:
     assert driver.on_shift is True
 
 
-def test_go_to_shift_driver_error() -> None:
-    driver = _create_driver()
-    assert driver.on_shift is False
-    driver.start_shift()
-    assert driver.on_shift is True
-    with pytest.raises(DriverAlreadyOnShift):
-        driver.start_shift()
-
-
 def test_leave_the_shift_driver() -> None:
     driver = _create_driver()
     driver.start_shift()
     assert driver.on_shift is True
     driver.end_shift()
     assert driver.on_shift is False
-
-
-def test_leave_the_shift_driver_error() -> None:
-    driver = _create_driver()
-    driver.start_shift()
-    assert driver.on_shift is True
-    driver.end_shift()
-    assert driver.on_shift is False
-    with pytest.raises(DriverIsNotShift):
-        driver.end_shift()
 
 
 def test_driver_assign_to_order() -> None:

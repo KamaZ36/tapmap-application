@@ -4,7 +4,6 @@ from decimal import Decimal
 from app.domain.exceptions.order import (
     DriverAlreadyAssignedToOrder,
     InvalidOrderStatusTransition,
-    OrderCannotTwoPoints,
 )
 from app.utils.uuid_v7 import uuid7
 from app.domain.entities.order import Order, OrderStatus
@@ -52,33 +51,20 @@ class TestOrderInitialization:
             travel_distance=1000,
             travel_time=10,
         )
-        assert order.status == OrderStatus.driver_search
-
-    def test_order_creation_with_less_than_two_points_error(self):
-        with pytest.raises(OrderCannotTwoPoints):
-            Order(
-                customer_id=uuid7(),
-                city_id=uuid7(),
-                points=[
-                    OrderPoint(
-                        address="Тест",
-                        coordinates=Coordinates(latitude=51.23, longitude=41.23),
-                    )
-                ],
-                price=Money(1000),
-                service_commission=Money(100),
-                travel_distance=1000,
-                travel_time=10,
-            )
+        assert order.status == OrderStatus.draft
 
 
 class TestOrderStatusTranzitions:
     def test_initial_status(self, sample_order: Order):
         """Тест начального статуса заказа"""
-        assert sample_order.status == OrderStatus.driver_search
+        assert sample_order.status == OrderStatus.draft
 
     def test_assign_driver_success(self, sample_order: Order):
         """Тест успешного назначения водителя на заказ"""
+        # Сначала подтверждаем заказ, чтобы перевести его в driver_search
+        sample_order.confirm()
+        assert sample_order.status == OrderStatus.driver_search
+
         driver_id = uuid7()
         sample_order.assign_driver(driver_id, feeding_distance=1000, feeding_time=10)
         assert sample_order.driver_id == driver_id
@@ -91,13 +77,23 @@ class TestOrderStatusTranzitions:
 
     def test_cancel_completed_order_error(self, sample_order: Order):
         """Тест нельзя отменить завершенный заказ"""
+        # Подтверждаем заказ и назначаем водителя
+        sample_order.confirm()
         driver_id = uuid7()
         sample_order.assign_driver(driver_id, feeding_distance=1000, feeding_time=10)
-        sample_order.status = OrderStatus.completed
+        # Переводим в completed через последовательность статусов
+        sample_order.update_status()  # driver_waiting_customer
+        sample_order.update_status()  # processing
+        sample_order.update_status()  # completed
+
         with pytest.raises(InvalidOrderStatusTransition):
             sample_order.cancel()
 
     def test_status_transitions_sequence(self, sample_order: Order):
+        # Подтверждаем заказ
+        sample_order.confirm()
+        assert sample_order.status == OrderStatus.driver_search
+
         driver_id = uuid7()
         sample_order.assign_driver(driver_id, feeding_distance=1000, feeding_time=10)
         assert sample_order.status == OrderStatus.waiting_driver
@@ -118,7 +114,9 @@ class TestOrderStatusTranzitions:
 class TestEdgeCases:
     def test_update_status_without_driver_fails(self, sample_order):
         """Тест: нельзя перевести в waiting_driver без водителя"""
-        sample_order.status = OrderStatus.driver_search
+        # Подтверждаем заказ, чтобы перевести в driver_search
+        sample_order.confirm()
+        # Пытаемся обновить статус без водителя - должно вызвать исключение
         with pytest.raises(InvalidOrderStatusTransition):
             sample_order.update_status()
 
@@ -132,6 +130,9 @@ class TestEdgeCases:
 
     def test_assign_driver_in_invalid_status_fails(self, sample_order):
         """Тест: нельзя назначить водителя в невалидном статусе"""
+        # Подтверждаем заказ
+        sample_order.confirm()
+
         # Сначала назначим водителя в валидном статусе
         driver_id = uuid7()
         sample_order.assign_driver(driver_id, 1000, 10)

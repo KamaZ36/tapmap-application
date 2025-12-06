@@ -13,8 +13,11 @@ from tests.unit.repositories.fake_draft_order_repository import FakeDraftOrderRe
 from tests.unit.repositories.fake_driver_repository import FakeDriverRepository
 from tests.unit.repositories.fake_order_repository import FakeOrderRepository
 from tests.unit.repositories.fake_user_repository import FakeUserRepository
+from tests.unit.repositories.fake_user_reader import FakeUserReader
 from tests.unit.repositories.fake_vehicle_repository import FakeVehicleRepository
 from tests.unit.repositories.fake_transaction_manager import FakeTransactionManager
+
+from app.infrastructure.readers.user.base import BaseUserReader
 
 
 @pytest.fixture(scope="function")
@@ -50,3 +53,8 @@ def vehicle_repository() -> BaseVehicleRepository:
 @pytest.fixture(scope="function")
 def draft_order_repository() -> BaseDraftOrderRepository:
     return FakeDraftOrderRepository()
+
+
+@pytest.fixture(scope="function")
+def user_reader(user_repository: BaseUserRepository) -> BaseUserReader:
+    return FakeUserReader(user_repository=user_repository)

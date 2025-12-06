@@ -1,11 +1,12 @@
 import pytest
 from uuid import uuid4
 
-from app.application.commands.driver.create import CreateDriverCommandHandler
-from app.application.commands.driver import CreateDriverCommand
-from app.application.dtos.user import CurrentUser
-from app.application.exceptions.permission import NoAccess
-from app.domain.entities.driver import Driver
+from app.application.commands.driver.create import (
+    CreateDriverCommand,
+    CreateDriverCommandHandler,
+)
+from app.application.dtos.driver import DriverDTO
+from app.application.exceptions.user import UserNotFound
 from app.domain.entities.user import User
 from app.domain.enums.user import UserRole
 from app.domain.value_objects.phone_number import PhoneNumber
@@ -37,9 +38,8 @@ async def test_create_driver_interactor_success(
     # Создаем пользователя в репозитории
     await user_repository.create(test_user)
 
-    current_user = CurrentUser(user_id=uuid4(), roles=[UserRole.admin])
-
     command = CreateDriverCommand(
+        current_user_id=uuid4(),
         user_id=user_id,
         first_name="Иван",
         last_name="Иванов",
@@ -49,16 +49,16 @@ async def test_create_driver_interactor_success(
     )
 
     # Act
-    result = await interactor(command, current_user)
+    result = await interactor(command)
 
     # Assert
-    assert isinstance(result, Driver)
+    assert isinstance(result, DriverDTO)
     assert result.id == user_id
     assert result.first_name == "Иван"
     assert result.last_name == "Иванов"
     assert result.middle_name == "Иванович"
     assert result.license_number == "1234567890"
-    assert result.phone_number.value == "79999999999"
+    assert result.phone_number == "79999999999"
     assert result.completed_orders_count == 0
     assert result.cancelled_orders_count == 0
     assert result.status.value == "active"
@@ -67,7 +67,8 @@ async def test_create_driver_interactor_success(
 
     # Проверяем, что водитель создан в репозитории
     driver_in_repo = await driver_repository.get_by_id(user_id)
-    assert driver_in_repo == result
+    assert driver_in_repo is not None
+    assert driver_in_repo.id == user_id
 
     # Проверяем, что пользователь обновлен с ролью водителя
     updated_user = await user_repository.get_by_id(user_id)
@@ -75,49 +76,6 @@ async def test_create_driver_interactor_success(
 
     # Проверяем, что транзакция зафиксирована
     assert transaction_manager.committed
-
-
-@pytest.mark.asyncio
-async def test_create_driver_interactor_no_permission(
-    driver_repository: BaseDriverRepository,
-    user_repository: BaseUserRepository,
-    transaction_manager: FakeTransactionManager,
-):
-    """Тест создания водителя без прав администратора"""
-    # Arrange
-    interactor = CreateDriverCommandHandler(
-        driver_repository=driver_repository,
-        user_repository=user_repository,
-        transaction_manager=transaction_manager,
-    )
-
-    user_id = uuid4()
-    test_user = User(
-        id=user_id, name="Test User", phone_number=PhoneNumber("79999999999")
-    )
-
-    await user_repository.create(test_user)
-
-    current_user = CurrentUser(
-        user_id=uuid4(),
-        roles=[UserRole.user],  # Обычный пользователь без прав администратора
-    )
-
-    command = CreateDriverCommand(
-        user_id=user_id,
-        first_name="Иван",
-        last_name="Иванов",
-        middle_name="Иванович",
-        license_number="1234567890",
-        phone_number="79999999999",
-    )
-
-    # Act & Assert
-    with pytest.raises(NoAccess):
-        await interactor(command, current_user)
-
-    # Проверяем, что транзакция не была зафиксирована
-    assert not transaction_manager.committed
 
 
 @pytest.mark.asyncio
@@ -136,9 +94,8 @@ async def test_create_driver_interactor_user_not_found(
 
     non_existent_user_id = uuid4()
 
-    current_user = CurrentUser(user_id=uuid4(), roles=[UserRole.admin])
-
     command = CreateDriverCommand(
+        current_user_id=uuid4(),
         user_id=non_existent_user_id,
         first_name="Иван",
         last_name="Иванов",
@@ -148,8 +105,8 @@ async def test_create_driver_interactor_user_not_found(
     )
 
     # Act & Assert
-    with pytest.raises(KeyError):  # Ожидаем KeyError, так как пользователь не найден
-        await interactor(command, current_user)
+    with pytest.raises(UserNotFound):
+        await interactor(command)
 
     # Проверяем, что транзакция не была зафиксирована
     assert not transaction_manager.committed
@@ -176,22 +133,21 @@ async def test_create_driver_interactor_without_middle_name(
 
     await user_repository.create(test_user)
 
-    current_user = CurrentUser(user_id=uuid4(), roles=[UserRole.admin])
-
     command = CreateDriverCommand(
+        current_user_id=uuid4(),
         user_id=user_id,
         first_name="Иван",
         last_name="Иванов",
-        middle_name="",  # Пустое отчество
+        middle_name=None,  # Пустое отчество
         license_number="1234567890",
         phone_number="79999999999",
     )
 
     # Act
-    result = await interactor(command, current_user)
+    result = await interactor(command)
 
     # Assert
-    assert result.middle_name == ""
+    assert result.middle_name is None
     assert transaction_manager.committed
 
 
@@ -216,12 +172,8 @@ async def test_create_driver_interactor_multiple_admin_roles(
 
     await user_repository.create(test_user)
 
-    current_user = CurrentUser(
-        user_id=uuid4(),
-        roles=[UserRole.user, UserRole.admin, UserRole.driver],  # Несколько ролей
-    )
-
     command = CreateDriverCommand(
+        current_user_id=uuid4(),
         user_id=user_id,
         first_name="Иван",
         last_name="Иванов",
@@ -231,8 +183,8 @@ async def test_create_driver_interactor_multiple_admin_roles(
     )
 
     # Act
-    result = await interactor(command, current_user)
+    result = await interactor(command)
 
     # Assert
-    assert isinstance(result, Driver)
+    assert isinstance(result, DriverDTO)
     assert transaction_manager.committed

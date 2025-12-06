@@ -26,7 +26,6 @@ def sample_user(sample_phone_number: str) -> User:
         id=uuid4(),
         name="Test User",
         phone_number=PhoneNumber(sample_phone_number),
-        role=UserRole.USER,
     )
 
 
@@ -37,6 +36,7 @@ def sample_driver(sample_phone_number: str) -> Driver:
         first_name="Виктор",
         last_name="Викторович",
         phone_number=PhoneNumber(sample_phone_number),
+        license_number="1234567890",
     )
 
 

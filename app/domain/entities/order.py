@@ -21,6 +21,7 @@ from app.domain.value_objects.order_point import OrderPoint
 
 
 STATUS_TRANSITIONS: dict[OrderStatus, set[OrderStatus]] = {
+    OrderStatus.draft: {OrderStatus.driver_search, OrderStatus.cancelled},
     OrderStatus.driver_search: {OrderStatus.waiting_driver, OrderStatus.cancelled},
     OrderStatus.waiting_driver: {
         OrderStatus.driver_waiting_customer,
@@ -150,7 +151,7 @@ class Order(Entity):
             raise OrderCannotTwoPoints()
         if self.price is None or self.service_commission is None:
             raise OrderCannotBeConfirmedWithoutPriceError()
-        self.status = OrderStatus.driver_search
+        self.change_status(status=OrderStatus.driver_search)
         self._events.append(OrderConfirmed(order_id=self.id))
 
     def cancel(self) -> None:
