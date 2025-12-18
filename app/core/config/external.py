@@ -6,12 +6,3 @@ class ExternalSettings(BaseSettings):
     geocoder_api_key: str
 
     router_base_url: str
-
-    kafka_host: str
-    kafka_port: str
-
-    openai_api_key: str
-
-    @property
-    def kafka_url(self) -> str:
-        return f"{self.kafka_host}:{self.kafka_port}"
