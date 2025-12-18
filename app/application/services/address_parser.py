@@ -2,10 +2,9 @@ import re
 from typing import Dict, Optional
 
 from app.application.dtos.location import ParsedAddressDTO
-from app.infrastructure.services.address_parser.base import BaseAddressParser
 
 
-class RegexAddressParser(BaseAddressParser):
+class AddressParser:
     """
     Универсальный regex-парсер русских адресов.
     Логика: всегда возвращаем ParsedAddressDTO.

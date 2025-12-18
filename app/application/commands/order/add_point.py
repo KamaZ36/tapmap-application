@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, CommandHandler
+from app.application.services.address_parser import AddressParser
 from app.application.services.geocoding_service import GeocodingService
 from app.application.services.route_service import RouteService
 from app.domain.value_objects.coordinates import Coordinates
@@ -21,7 +22,6 @@ from app.application.services.pricing.base import BasePricingService
 from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
-from app.infrastructure.services.address_parser.base import BaseAddressParser
 
 
 @dataclass
@@ -38,7 +38,7 @@ class AddPointToOrderCommandHandler(CommandHandler[AddPointToOrderCommand, Order
     geocoding_service: GeocodingService
     route_service: RouteService
     city_repository: BaseCityRepository
-    address_parser: BaseAddressParser
+    address_parser: AddressParser
     pricing_service: BasePricingService
 
     async def __call__(self, command: AddPointToOrderCommand) -> OrderDTO:

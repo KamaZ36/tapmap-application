@@ -3,6 +3,7 @@ from uuid import UUID
 
 from app.application.commands.base import BaseCommand, CommandHandler
 from app.application.commands.converters import convert_order_entities_to_dto
+from app.application.services.address_parser import AddressParser
 from app.application.services.geocoding_service import GeocodingService
 from app.domain.value_objects.order_point import OrderPoint
 from app.domain.entities.order import Order
@@ -25,7 +26,6 @@ from app.infrastructure.database.transaction_manager.base import TransactionMana
 from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
-from app.infrastructure.services.address_parser.base import BaseAddressParser
 
 
 @dataclass
@@ -42,7 +42,7 @@ class CreateOrderCommandHandler(CommandHandler[CreateOrderCommand, OrderDTO]):
     city_repository: BaseCityRepository
     user_service: UserService
     geocoding_service: GeocodingService
-    address_parser: BaseAddressParser
+    address_parser: AddressParser
     transaction_manager: TransactionManager
 
     async def __call__(self, command: CreateOrderCommand) -> OrderDTO:
