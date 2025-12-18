@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import DateTime, func
+from sqlalchemy import DateTime, func, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.utils import get_datetime_utc_now

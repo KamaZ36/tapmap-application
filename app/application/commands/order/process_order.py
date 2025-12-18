@@ -11,14 +11,14 @@ from app.infrastructure.database.transaction_manager.base import TransactionMana
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
 from app.infrastructure.services.message_broker.base import BaseMessageBroker
-from app.infrastructure.services.route_service.base import BaseRouteService
+from app.infrastructure.gateways.routes.base import BaseRouteInfoGateway
 
 
 @dataclass
 class ProcessOrderInteraction:
     order_repository: BaseOrderRepository
     driver_repository: BaseDriverRepository
-    route_service: BaseRouteService
+    route_service: BaseRouteInfoGateway
     message_broker: BaseMessageBroker
     transaction_manager: TransactionManager
 

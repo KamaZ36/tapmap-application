@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide
 
+from app.application.commands.city.create import CreateCityInteraction
 from app.application.commands.driver.exit_from_shift import (
     DriverExitFromShiftCommandHandler,
 )
@@ -53,3 +54,6 @@ class CommandHandlersProvider(Provider):
 
     # VEHICLES
     create_vehicle_interactor = provide(CreateVehicleInteraction)
+
+    # CITY
+    create_city_interactor = provide(CreateCityInteraction)

@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, CommandHandler
+from app.application.services.geocoding_service import GeocodingService
+from app.application.services.route_service import RouteService
 from app.domain.value_objects.coordinates import Coordinates
 from app.domain.value_objects.order_point import OrderPoint
 
@@ -20,8 +22,6 @@ from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
 from app.infrastructure.services.address_parser.base import BaseAddressParser
-from app.infrastructure.services.geocoder.base import BaseGeocoder
-from app.infrastructure.services.route_service.base import BaseRouteService
 
 
 @dataclass
@@ -35,8 +35,8 @@ class AddPointToOrderCommand(BaseCommand):
 class AddPointToOrderCommandHandler(CommandHandler[AddPointToOrderCommand, OrderDTO]):
     user_repository: BaseUserRepository
     draft_order_repository: BaseDraftOrderRepository
-    geocoder: BaseGeocoder
-    route_service: BaseRouteService
+    geocoding_service: GeocodingService
+    route_service: RouteService
     city_repository: BaseCityRepository
     address_parser: BaseAddressParser
     pricing_service: BasePricingService
@@ -58,7 +58,7 @@ class AddPointToOrderCommandHandler(CommandHandler[AddPointToOrderCommand, Order
             location = command.point
             coordinates = Coordinates(latitude=location[0], longitude=location[1])
 
-            geocoded_info = await self.geocoder.get_address(coordinates)
+            geocoded_info = await self.geocoding_service.get_address(coordinates)
             if geocoded_info is None:
                 raise InaccurateGeolocation()
 
@@ -75,7 +75,9 @@ class AddPointToOrderCommandHandler(CommandHandler[AddPointToOrderCommand, Order
                     f"{city.state}, {city.name}, {parsed_start_address.street}"
                 )
 
-            geocoded_info = await self.geocoder.get_coordinates(address=query_address)
+            geocoded_info = await self.geocoding_service.get_coordinates(
+                address=query_address
+            )
             if geocoded_info is None:
                 raise InaccurateAddress(address=query_address)
 
@@ -85,10 +87,10 @@ class AddPointToOrderCommandHandler(CommandHandler[AddPointToOrderCommand, Order
             )
             point = OrderPoint(address=geocoded_info.address, coordinates=coordinates)
 
-        travel_distance = await self.route_service.get_distance_route(
+        travel_distance = await self.route_service.get_route_distance(
             [or_point.coordinates for or_point in order.points] + [point.coordinates]
         )
-        travel_time = await self.route_service.get_time_route(travel_distance)
+        travel_time = await self.route_service.get_route_travel_time(travel_distance)
 
         price = self.pricing_service.calculate_price(
             city=city, distance=travel_distance

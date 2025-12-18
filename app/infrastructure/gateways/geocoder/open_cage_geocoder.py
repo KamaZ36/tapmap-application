@@ -8,11 +8,11 @@ from app.domain.value_objects.coordinates import Coordinates
 from app.infrastructure.exceptions.geocoder import (
     GeocodingFailed,
 )
-from app.infrastructure.services.geocoder.base import BaseGeocoder
+from app.infrastructure.gateways.geocoder.base import BaseGeocoderGateway
 from app.infrastructure.services.http_client.base import BaseHttpClient
 
 
-class Geocoder(BaseGeocoder):
+class OpenCageGeocoderGateway(BaseGeocoderGateway):
     BASE_URL = settings.geocoder_base__url
 
     def __init__(self, http_client: BaseHttpClient) -> None:

@@ -1,6 +1,7 @@
 from uuid import UUID
 from fastapi import APIRouter
 
+from app.application.commands.city.create import CreateCityCommand
 from app.core.mediator import get_mediator
 
 from app.application.dtos.driver import DriverDTO
@@ -71,3 +72,9 @@ async def get_active_order_for_current_driver(
     order = await mediator.handle(query)
 
     return order
+
+
+@router.post("/cities", summary="Создать город")
+async def create_supported_city(data: CreateCityCommand):
+    mediator = get_mediator()
+    await mediator.handle(data)

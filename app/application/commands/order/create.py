@@ -3,6 +3,7 @@ from uuid import UUID
 
 from app.application.commands.base import BaseCommand, CommandHandler
 from app.application.commands.converters import convert_order_entities_to_dto
+from app.application.services.geocoding_service import GeocodingService
 from app.domain.value_objects.order_point import OrderPoint
 from app.domain.entities.order import Order
 from app.domain.value_objects.coordinates import Coordinates
@@ -25,7 +26,6 @@ from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
 from app.infrastructure.services.address_parser.base import BaseAddressParser
-from app.infrastructure.services.geocoder.base import BaseGeocoder
 
 
 @dataclass
@@ -41,7 +41,7 @@ class CreateOrderCommandHandler(CommandHandler[CreateOrderCommand, OrderDTO]):
     user_repository: BaseUserRepository
     city_repository: BaseCityRepository
     user_service: UserService
-    geocoder: BaseGeocoder
+    geocoding_service: GeocodingService
     address_parser: BaseAddressParser
     transaction_manager: TransactionManager
 
@@ -63,7 +63,7 @@ class CreateOrderCommandHandler(CommandHandler[CreateOrderCommand, OrderDTO]):
             if city is None:
                 raise CityNotSupported()
 
-            geocoded_info = await self.geocoder.get_address(coordinates)
+            geocoded_info = await self.geocoding_service.get_address(coordinates)
             if geocoded_info is None:
                 raise InaccurateGeolocation()
 
@@ -83,7 +83,9 @@ class CreateOrderCommandHandler(CommandHandler[CreateOrderCommand, OrderDTO]):
                     raise CityNotSupported()
                 query_address = f"{city.state}, {city.name}, {parsed_address.street}"
 
-            geocoded_info = await self.geocoder.get_coordinates(address=query_address)
+            geocoded_info = await self.geocoding_service.get_coordinates(
+                address=query_address
+            )
             if geocoded_info is None:
                 raise InaccurateAddress(address=raw_address)
 

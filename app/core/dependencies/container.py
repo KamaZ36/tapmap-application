@@ -4,6 +4,7 @@ from dishka import AsyncContainer, make_async_container
 from app.core.dependencies.auth import AuthServices
 from app.core.dependencies.base import BaseAppProvider
 from app.core.dependencies.command_handlers import CommandHandlersProvider
+from app.core.dependencies.gateways import GatewaysProvider
 from app.core.dependencies.query_handlers import QueryHandlersProvider
 from app.core.dependencies.readers import ReadersProvider
 from app.core.dependencies.repositories import RepositoriesProvider
@@ -19,6 +20,7 @@ def make_base_providers():
         CommandHandlersProvider(),
         QueryHandlersProvider(),
         AuthServices(),
+        GatewaysProvider(),
         Services(),
         TgBotProvider(),
     )

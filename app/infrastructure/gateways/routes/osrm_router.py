@@ -1,13 +1,13 @@
-from app.settings import settings
+from app.core.config import settings
 
 from app.domain.value_objects.coordinates import Coordinates
+
 from app.infrastructure.exceptions.router import FailedToCalculateRoute
-
 from app.infrastructure.services.http_client.base import BaseHttpClient
-from app.infrastructure.services.router.base import BaseRouter
+from app.infrastructure.gateways.routes.base import BaseRouteInfoGateway
 
 
-class Router(BaseRouter):
+class OSRMRouteInfoGateway(BaseRouteInfoGateway):
     BASE_URL = settings.router_base_url
 
     def __init__(self, http_client: BaseHttpClient) -> None:
@@ -18,7 +18,7 @@ class Router(BaseRouter):
             f"{coordinates.longitude},{coordinates.latitude}"
             for coordinates in coordinates_list
         )
-        url = f"{self.BASE_URL}{coordinates}?overview=false"
+        url = f"{self.BASE_URL}/{coordinates}?overview=false"
         response_data = await self.http_client.get(url)
         if not response_data.get("routes"):
             raise FailedToCalculateRoute()

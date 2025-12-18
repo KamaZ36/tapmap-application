@@ -9,13 +9,13 @@ from app.application.exceptions.draft_order import InvalidLocation
 from app.application.dtos.location import RouteInfoDTO
 
 from app.infrastructure.exceptions.geocoder import IncorrectGeolocation, GeocodingFailed
-from app.infrastructure.services.geocoder.base import BaseGeocoder
+from app.infrastructure.gateways.geocoder.base import BaseGeocoderGateway
 from app.infrastructure.services.router.base import BaseRouter
 
 
 @dataclass
 class GeolocationService:
-    geocoder: BaseGeocoder
+    geocoder: BaseGeocoderGateway
     router: BaseRouter
 
     @staticmethod
