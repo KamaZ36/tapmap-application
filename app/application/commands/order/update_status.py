@@ -11,7 +11,7 @@ from app.application.exceptions.driver import DriverNotFound
 from app.application.exceptions.order import OrderNotFound
 
 
-from app.infrastructure.services.message_broker.base import BaseMessageBroker
+from app.infrastructure.gateways.message_broker.base import BaseMessageBrokerGateway
 from app.infrastructure.database.transaction_manager.base import TransactionManager
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
@@ -31,7 +31,7 @@ class UpdateOrderStatusCommandHandler(
     order_repository: BaseOrderRepository
     driver_repository: BaseDriverRepository
     user_repository: BaseUserRepository
-    message_broker: BaseMessageBroker
+    message_broker: BaseMessageBrokerGateway
     transaction_manager: TransactionManager
 
     async def __call__(self, command: UpdateOrderStatusCommand) -> OrderStatus:

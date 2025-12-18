@@ -16,7 +16,7 @@ from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepos
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
-from app.infrastructure.services.message_broker.base import BaseMessageBroker
+from app.infrastructure.gateways.message_broker.base import BaseMessageBrokerGateway
 
 
 @dataclass(frozen=True, eq=False)
@@ -32,7 +32,7 @@ class CancelOrderCommandHandler(CommandHandler[CancelOrderCommand, bool]):
     draft_order_repository: BaseDraftOrderRepository
     order_repository: BaseOrderRepository
     driver_repository: BaseDriverRepository
-    message_broker: BaseMessageBroker
+    message_broker: BaseMessageBrokerGateway
     transaction_manager: TransactionManager
 
     async def __call__(self, command: CancelOrderCommand) -> bool:

@@ -13,7 +13,7 @@ from app.infrastructure.database.transaction_manager.base import TransactionMana
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
 from app.infrastructure.repositories.user.base import BaseUserRepository
-from app.infrastructure.services.message_broker.base import BaseMessageBroker
+from app.infrastructure.gateways.message_broker.base import BaseMessageBrokerGateway
 
 
 @dataclass(frozen=True, eq=False)
@@ -27,7 +27,7 @@ class ConfirmOrderCommandHandler(CommandHandler[ConfirmOrderCommand, OrderDTO]):
     user_repository: BaseUserRepository
     draft_order_repository: BaseDraftOrderRepository
     order_repository: BaseOrderRepository
-    message_broker: BaseMessageBroker
+    message_broker: BaseMessageBrokerGateway
     transaction_manager: TransactionManager
 
     async def __call__(self, command: ConfirmOrderCommand) -> OrderDTO:

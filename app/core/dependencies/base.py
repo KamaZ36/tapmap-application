@@ -11,8 +11,6 @@ from app.infrastructure.database.transaction_manager.sqlalchemy import (
 from app.infrastructure.redis.connection import get_redis_client
 from app.infrastructure.services.http_client.base import BaseHttpClient
 from app.infrastructure.services.http_client.http_client import HttpClient
-from app.infrastructure.services.message_broker.base import BaseMessageBroker
-from app.infrastructure.services.message_broker.redis_broker import RedisMessageBroker
 
 
 class BaseAppProvider(Provider):
@@ -35,11 +33,3 @@ class BaseAppProvider(Provider):
     @provide(scope=Scope.APP)
     def get_redis_client(self) -> Redis:
         return get_redis_client()
-
-    # MESSAGE BROKER
-    @provide(scope=Scope.APP)
-    def get_message_broker(self, redis: Redis) -> BaseMessageBroker:
-        return RedisMessageBroker(redis=redis)
-        # return KafkaMessageBroker(producer=AIOKafkaProducer(
-        #     bootstrap_servers=settings.kafka_url
-        # ))

@@ -2,8 +2,8 @@ from dishka import Provider, provide, Scope
 
 from app.application.services.address_parser import AddressParser
 from app.application.services.geocoding_service import GeocodingService
-from app.application.services.pricing.base import BasePricingService
-from app.application.services.pricing.pricing_service import PricingService
+from app.application.services.message_broker import MessageBrokerService
+from app.application.services.pricing_service import PricingService
 from app.application.services.route_service import RouteService
 from app.application.services.user_service import UserService
 
@@ -16,10 +16,8 @@ class Services(Provider):
     geocoding_serivce = provide(GeocodingService)
     route_service = provide(RouteService)
 
-    @provide(scope=Scope.REQUEST)
-    def get_pricing_service(self) -> BasePricingService:
-        return PricingService()
+    message_broker = provide(MessageBrokerService)
 
-    @provide(scope=Scope.REQUEST)
-    def get_address_parser(self) -> AddressParser:
-        return AddressParser()
+    address_parser = provide(AddressParser)
+
+    pricing_service = provide(PricingService)

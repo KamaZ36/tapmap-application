@@ -4,6 +4,7 @@ from uuid import UUID
 from app.application.commands.base import BaseCommand, CommandHandler
 from app.application.services.address_parser import AddressParser
 from app.application.services.geocoding_service import GeocodingService
+from app.application.services.pricing_service import PricingService
 from app.application.services.route_service import RouteService
 from app.domain.value_objects.coordinates import Coordinates
 from app.domain.value_objects.order_point import OrderPoint
@@ -17,7 +18,6 @@ from app.application.exceptions.geolocation import (
 )
 from app.application.exceptions.order import OrderNotFound
 from app.application.exceptions.user import UserNotFound
-from app.application.services.pricing.base import BasePricingService
 
 from app.infrastructure.repositories.city.base import BaseCityRepository
 from app.infrastructure.repositories.draft_order.base import BaseDraftOrderRepository
@@ -39,7 +39,7 @@ class AddPointToOrderCommandHandler(CommandHandler[AddPointToOrderCommand, Order
     route_service: RouteService
     city_repository: BaseCityRepository
     address_parser: AddressParser
-    pricing_service: BasePricingService
+    pricing_service: PricingService
 
     async def __call__(self, command: AddPointToOrderCommand) -> OrderDTO:
         order = await self.draft_order_repository.get_by_id(command.order_id)

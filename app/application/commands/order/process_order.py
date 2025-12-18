@@ -10,7 +10,7 @@ from app.application.exceptions.driver import DriverLastLocationNotSet
 from app.infrastructure.database.transaction_manager.base import TransactionManager
 from app.infrastructure.repositories.driver.base import BaseDriverRepository
 from app.infrastructure.repositories.order.base import BaseOrderRepository
-from app.infrastructure.services.message_broker.base import BaseMessageBroker
+from app.infrastructure.gateways.message_broker.base import BaseMessageBrokerGateway
 from app.infrastructure.gateways.routes.base import BaseRouteInfoGateway
 
 
@@ -19,7 +19,7 @@ class ProcessOrderInteraction:
     order_repository: BaseOrderRepository
     driver_repository: BaseDriverRepository
     route_service: BaseRouteInfoGateway
-    message_broker: BaseMessageBroker
+    message_broker: BaseMessageBrokerGateway
     transaction_manager: TransactionManager
 
     async def __call__(self, order_id: UUID) -> bool:
